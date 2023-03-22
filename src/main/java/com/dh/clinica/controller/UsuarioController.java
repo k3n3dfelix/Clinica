@@ -1,9 +1,12 @@
 package com.dh.clinica.controller;
 
+import com.dh.clinica.model.Consulta;
 import com.dh.clinica.model.Dentista;
 import com.dh.clinica.model.Usuario;
 import com.dh.clinica.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,31 +20,44 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping("/buscar")
-    public List<Usuario> listarTodos() {
-        return usuarioService.listarTodos();
+    public ResponseEntity<List<Usuario>> listarTodos() {
+
+        return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
     @GetMapping("/buscar/{id}")
-    public Optional<Usuario> buscarPorId(@PathVariable Integer id) {
-        return usuarioService.buscarPorId(id);
+    public ResponseEntity<Optional<Usuario>> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
 
     @DeleteMapping("/{id}")
-    public void deletarUsuario(@PathVariable Integer id) {
-        usuarioService.excluir(id);
+    public ResponseEntity<String> deletarUsuario(@PathVariable Integer id) {
+        ResponseEntity<String> response;
+        if(usuarioService.buscarPorId(id).isPresent()) {
+            usuarioService.excluir(id);
+            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Usuario apagado com  sucesso!");
+        }else{
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return response;
     }
 
     @PostMapping
-    public Usuario cadastrar(@RequestBody Usuario usuario) {
-        return usuarioService.cadastrar(usuario);
+    public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
+        ResponseEntity<Usuario> response;
+        response = ResponseEntity.ok(usuarioService.cadastrar(usuario));
+
+        return response;
     }
 
     @PutMapping
-    public Usuario atualizar(@RequestBody Usuario usuario) throws Exception {
+    public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) throws Exception {
+        ResponseEntity<Usuario> response;
         if (usuario.getId() != null && usuarioService.buscarPorId(usuario.getId()).isPresent())
-            usuarioService.atualizar(usuario);
+            response = ResponseEntity.ok(usuarioService.atualizar(usuario));
         else
-            throw new Exception("Registro não encontrado!");
-        return usuario;
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+           // throw new Exception("Registro não encontrado!");
+        return response;
     }
 }
