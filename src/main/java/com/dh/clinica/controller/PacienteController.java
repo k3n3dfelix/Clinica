@@ -1,6 +1,7 @@
 package com.dh.clinica.controller;
 
 
+import com.dh.clinica.model.Consulta;
 import com.dh.clinica.model.Paciente;
 import com.dh.clinica.service.PacienteService;
 import com.dh.clinica.service.impl.EnderecoServiceImpl;
@@ -15,7 +16,7 @@ import java.util.List;
 @RequestMapping("/pacientes")
 public class PacienteController {
 
-    private PacienteService pacienteService = new PacienteService(new PacienteServiceImpl(new EnderecoServiceImpl()));
+    private final PacienteService pacienteService = new PacienteService(new PacienteServiceImpl(new EnderecoServiceImpl()));
 
     @PostMapping()
     public ResponseEntity<Paciente> cadastrar(@RequestBody Paciente paciente) {
@@ -28,12 +29,11 @@ public class PacienteController {
     }
 
     @PutMapping
-    public Paciente atualizar(@RequestBody Paciente paciente) throws Exception {
+    public ResponseEntity<Paciente> atualizar(@RequestBody Paciente paciente) throws Exception {
         if (paciente.getId() != null && pacienteService.buscar(paciente.getId()).isPresent())
-            pacienteService.atualizar(paciente);
+            return ResponseEntity.ok(pacienteService.atualizar(paciente));
         else
-            throw new Exception("Registro não encontrado!");
-        return paciente;
+            throw new Exception("Registro não encontrado ou não informado!");
     }
 
     @DeleteMapping("/{id}")
