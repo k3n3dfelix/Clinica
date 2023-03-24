@@ -26,26 +26,34 @@ public class DentistaController {
     }
 
     @GetMapping("/buscar")
-    public List<Dentista> listarTodos () {
-        return dentistaService.buscarTodos();
+    public ResponseEntity<List<Dentista>> listarTodos () {
+        return ResponseEntity.ok(dentistaService.buscarTodos());
     }
 
     @GetMapping("/buscar/{id}")
-    public Optional<Dentista> buscarPorId(@PathVariable Integer id) {
-        return dentistaService.buscarPorId(id);
+    public ResponseEntity<Optional<Dentista>> buscarPorId(@PathVariable Integer id) {
+        return ResponseEntity.ok(dentistaService.buscarPorId(id));
     }
 
     @DeleteMapping("/{id}")
-    public void deletarDentista(@PathVariable Integer id) {
-        dentistaService.excluir(id);
+    public  ResponseEntity<String> deletarDentista(@PathVariable Integer id) {
+        ResponseEntity<String> response = null;
+        if (dentistaService.buscarPorId(id).isPresent()) {
+            dentistaService.excluir(id);
+            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Dentista apagado com  sucesso!");
+        } else {
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum dentista encontrado!");
+        }
+        return response;
     }
 
     @PutMapping
-    public Dentista atualizar(@RequestBody Dentista dentista) throws Exception {
+    public ResponseEntity<Dentista> atualizar(@RequestBody Dentista dentista) throws Exception {
+        ResponseEntity<Dentista> response;
         if (dentista.getId() != null && dentistaService.buscarPorId(dentista.getId()).isPresent())
-            dentistaService.atualizar(dentista);
+            response = ResponseEntity.ok(dentistaService.atualizar(dentista));
         else
-            throw new Exception("Registro não encontrado!");
-        return dentista;
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return response;
     }
 }

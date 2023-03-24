@@ -1,12 +1,11 @@
-package com.dh.clinica.service.impl;
+package com.dh.clinica.repository;
 
 import com.dh.clinica.config.ConfiguracaoJDBC;
 import com.dh.clinica.model.Endereco;
 import com.dh.clinica.model.Paciente;
-import com.dh.clinica.service.IDao;
 import com.dh.clinica.util.Util;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -17,16 +16,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-public class PacienteServiceImpl implements IDao<Paciente> {
+@Repository
+public class PacienteDaoImpl implements IDao<Paciente> {
 
     private ConfiguracaoJDBC configurationJDBC;
-    private EnderecoServiceImpl enderecoServiceImpl;
-    final static Logger log = Logger.getLogger(PacienteServiceImpl.class);
+    private EnderecoDaoImpl enderecoDaoImpl;
+    final static Logger log = Logger.getLogger(PacienteDaoImpl.class);
 
-    public PacienteServiceImpl(EnderecoServiceImpl enderecoServiceImpl) {
+    public PacienteDaoImpl(EnderecoDaoImpl enderecoDaoImpl) {
         this.configurationJDBC = new ConfiguracaoJDBC();
-        this.enderecoServiceImpl = enderecoServiceImpl;
+        this.enderecoDaoImpl = enderecoDaoImpl;
     }
 
     @Override
@@ -34,7 +33,7 @@ public class PacienteServiceImpl implements IDao<Paciente> {
         log.debug("Registrando paciente : " + paciente.toString());
         Connection connection = configurationJDBC.conectarComBancoDeDados();
         Statement stmt = null;
-        paciente.setEndereco(enderecoServiceImpl.salvar(paciente.getEndereco()));
+        paciente.setEndereco(enderecoDaoImpl.salvar(paciente.getEndereco()));
         String query = String.format("INSERT INTO PACIENTE  (NOME, SOBRENOME, RG, DATA_CADASTRO, ENDERECO_ID) VALUES ('%s','%s','%s','%s','%s')",
                 paciente.getNome(),
                 paciente.getSobrenome(),
@@ -122,7 +121,7 @@ public class PacienteServiceImpl implements IDao<Paciente> {
         log.debug("Atualizando um paciente: " + paciente.toString());
         Connection connection = configurationJDBC.conectarComBancoDeDados();
         if(paciente.getEndereco() != null && paciente.getId() != null)
-            enderecoServiceImpl.atualizar(paciente.getEndereco());
+            enderecoDaoImpl.atualizar(paciente.getEndereco());
         Statement stmt = null;
         String query = String.format("UPDATE PACIENTE SET NOME = '%s', SOBRENOME = '%s', RG = '%s' WHERE ID = '%s'",
                 paciente.getNome(), paciente.getSobrenome(), paciente.getRg(), paciente.getId());
@@ -144,7 +143,7 @@ public class PacienteServiceImpl implements IDao<Paciente> {
         String sobrenome = result.getString("SOBRENOME");
         String rg = result.getString("RG");
         Date dataCadastro = result.getDate("DATA_CADASTRO");
-        Endereco endereco = enderecoServiceImpl.buscar(result.getInt("ENDERECO_ID")).orElse(null);
+        Endereco endereco = enderecoDaoImpl.buscar(result.getInt("ENDERECO_ID")).orElse(null);
         return new Paciente(idPaciente, nome, sobrenome, rg, dataCadastro, endereco);
 
     }

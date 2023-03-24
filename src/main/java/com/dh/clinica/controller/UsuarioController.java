@@ -1,7 +1,5 @@
 package com.dh.clinica.controller;
 
-import com.dh.clinica.model.Consulta;
-import com.dh.clinica.model.Dentista;
 import com.dh.clinica.model.Usuario;
 import com.dh.clinica.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +33,9 @@ public class UsuarioController {
         ResponseEntity<String> response;
         if(usuarioService.buscarPorId(id).isPresent()) {
             usuarioService.excluir(id);
-            response = ResponseEntity.status(HttpStatus.NO_CONTENT).body("Usuario apagado com  sucesso!");
+            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario apagado com  sucesso!");
         }else{
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
         }
         return response;
     }

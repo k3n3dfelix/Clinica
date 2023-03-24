@@ -1,10 +1,9 @@
-package com.dh.clinica.service.impl;
+package com.dh.clinica.repository;
 
 import com.dh.clinica.config.ConfiguracaoJDBC;
-import com.dh.clinica.model.Dentista;
 import com.dh.clinica.model.Usuario;
-import com.dh.clinica.service.IDao;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Repository
 public class UsuarioDaoImpl implements IDao<Usuario> {
 
     private ConfiguracaoJDBC configuracaoJDBC;

@@ -1,7 +1,7 @@
 package com.dh.clinica.service;
 
 import com.dh.clinica.model.Usuario;
-import com.dh.clinica.service.impl.UsuarioDaoImpl;
+import com.dh.clinica.repository.UsuarioDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -7,7 +7,7 @@ import java.util.Date;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+// @NoArgsConstructor
 @ToString
 public class Paciente {
 

@@ -1,6 +1,7 @@
 package com.dh.clinica.service;
 
 import com.dh.clinica.model.Dentista;
+import com.dh.clinica.repository.IDao;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

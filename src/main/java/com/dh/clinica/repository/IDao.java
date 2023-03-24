@@ -1,4 +1,4 @@
-package com.dh.clinica.service;
+package com.dh.clinica.repository;
 
 import java.util.List;
 import java.util.Optional;
