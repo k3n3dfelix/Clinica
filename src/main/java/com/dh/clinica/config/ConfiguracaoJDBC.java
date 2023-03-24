@@ -13,7 +13,9 @@ public class ConfiguracaoJDBC {
 
     public ConfiguracaoJDBC() {
         this.jdbcDriver = "org.h2.Driver";
-        this.dbUrl = "jdbc:h2:~/clinica;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'create.sql'";
+        this.dbUrl = "jdbc:h2:mem:clinica;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'create.sql'";
+        // "jdbc:h2:~/clinica;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'create.sql'";   banco persistente
+        // "jdbc:h2:mem:clinica;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'create.sql'"; banco não persistente
         this.nomeUsuario = "sa";
         this.senha = "";
     }
