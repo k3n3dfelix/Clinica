@@ -49,9 +49,9 @@ public class ConsultaController {
         ResponseEntity<String> response;
         if(consultaService.buscarPorId(id).isPresent()){
             consultaService.excluir(id);
-            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Consulta apagada por  sucesso!");
+            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Consulta excluída com sucesso!");
         } else {
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma consulta encontrada");
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma consulta encontrada!");
         }
         return response;
     }

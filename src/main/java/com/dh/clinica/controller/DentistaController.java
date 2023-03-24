@@ -36,12 +36,12 @@ public class DentistaController {
         return response;
     }
 
-    @GetMapping("/buscar")
+    @GetMapping
     public ResponseEntity<List<Dentista>> listarTodos () {
         return ResponseEntity.ok(dentistaService.buscarTodos());
     }
 
-    @GetMapping("/buscar/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Optional<Dentista>> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(dentistaService.buscarPorId(id));
     }
@@ -51,7 +51,7 @@ public class DentistaController {
         ResponseEntity<String> response = null;
         if (dentistaService.buscarPorId(id).isPresent()) {
             dentistaService.excluir(id);
-            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Dentista apagado com  sucesso!");
+            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Dentista excluído com sucesso!");
         } else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum dentista encontrado!");
         }
@@ -59,7 +59,7 @@ public class DentistaController {
     }
 
     @PutMapping
-    public ResponseEntity<Dentista> atualizar(@RequestBody Dentista dentista) throws Exception {
+    public ResponseEntity<Dentista> atualizar(@RequestBody Dentista dentista) {
         ResponseEntity<Dentista> response;
         if (dentista.getId() != null && dentistaService.buscarPorId(dentista.getId()).isPresent())
             response = ResponseEntity.ok(dentistaService.atualizar(dentista));

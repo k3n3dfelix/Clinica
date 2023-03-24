@@ -1,5 +1,6 @@
 package com.dh.clinica.controller;
 
+import com.dh.clinica.model.Paciente;
 import com.dh.clinica.model.Usuario;
 import com.dh.clinica.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,13 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping("/buscar")
+    @GetMapping
     public ResponseEntity<List<Usuario>> listarTodos() {
 
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
-    @GetMapping("/buscar/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Optional<Usuario>> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
@@ -33,34 +34,42 @@ public class UsuarioController {
         ResponseEntity<String> response;
         if(usuarioService.buscarPorId(id).isPresent()) {
             usuarioService.excluir(id);
-            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario apagado com  sucesso!");
+            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario excluído com sucesso!");
         }else{
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado!");
         }
         return response;
     }
 
-    @PostMapping
+    @PostMapping()
     public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
-        ResponseEntity<Usuario> response;
-
+        ResponseEntity<Usuario> response = null;
         if (!(usuario.getNome() == null || usuario.getEmail()== null || usuario.getSenha()== null || usuario.getNivelAcesso() == null)){
+            if (validacaoAtributo(usuario)){
                 usuarioService.cadastrar(usuario);
                 response = ResponseEntity.ok(usuario);
             } else {
+                response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }} else {
             response = new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         return response;
     }
 
     @PutMapping
-    public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) throws Exception {
+    public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) {
         ResponseEntity<Usuario> response;
         if (usuario.getId() != null && usuarioService.buscarPorId(usuario.getId()).isPresent())
             response = ResponseEntity.ok(usuarioService.atualizar(usuario));
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-           // throw new Exception("Registro não encontrado!");
         return response;
+    }
+
+    public boolean validacaoAtributo(Usuario usuario){
+        if (usuario.getNome().isEmpty() || usuario.getNome().isBlank()){
+            return false;
+        }
+        return true;
     }
 }

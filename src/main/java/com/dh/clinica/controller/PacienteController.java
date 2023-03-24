@@ -34,17 +34,17 @@ public class PacienteController {
         return response;
     }
     
-    @GetMapping("buscar/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Paciente> buscar(@PathVariable Integer id) {
         return ResponseEntity.ok(pacienteService.buscar(id).orElse(null));
     }
 
     @PutMapping
-    public ResponseEntity<Paciente> atualizar(@RequestBody Paciente paciente) throws Exception {
+    public ResponseEntity<Paciente> atualizar(@RequestBody Paciente paciente) {
         if (paciente.getId() != null && pacienteService.buscar(paciente.getId()).isPresent())
             return ResponseEntity.ok(pacienteService.atualizar(paciente));
         else
-            throw new Exception("Registro não encontrado ou não informado!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @DeleteMapping("/{id}")
@@ -54,12 +54,12 @@ public class PacienteController {
             pacienteService.excluir(id);
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Paciente excluído com sucesso!");
         } else {
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado!");
         }
          return response;
     }
 
-    @GetMapping("/buscar")
+    @GetMapping
     public ResponseEntity <List<Paciente>> buscarTodos () {
         return ResponseEntity.ok(pacienteService.buscarTodos());
     }
