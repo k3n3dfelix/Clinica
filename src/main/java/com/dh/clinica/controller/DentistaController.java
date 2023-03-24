@@ -1,6 +1,7 @@
 package com.dh.clinica.controller;
 
 import com.dh.clinica.model.Dentista;
+import com.dh.clinica.model.Paciente;
 import com.dh.clinica.service.DentistaService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,18 @@ public class DentistaController {
     private DentistaService dentistaService;
 
     @PostMapping
-    public Dentista cadastrar(@RequestBody Dentista dentista) {
-        return dentistaService.cadastrar(dentista);
+    public ResponseEntity<Dentista> cadastrar(@RequestBody Dentista dentista) {
+        ResponseEntity<Dentista> response = null;
+        if (!(dentista.getNome() == null || dentista.getSobrenome()== null || dentista.getMatricula()== null)){
+            if (validacaoAtributo(dentista)){
+                dentistaService.cadastrar(dentista);
+                response = ResponseEntity.ok(dentista);
+            } else {
+                response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+            }} else {
+            response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return response;
     }
 
     @GetMapping("/buscar")
@@ -55,5 +66,12 @@ public class DentistaController {
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return response;
+    }
+
+    public boolean validacaoAtributo(Dentista dentista){
+        if (dentista.getMatricula().isEmpty() || dentista.getMatricula().isBlank()){
+            return false;
+        }
+        return true;
     }
 }
