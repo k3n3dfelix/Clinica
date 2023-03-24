@@ -43,8 +43,13 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
         ResponseEntity<Usuario> response;
-        response = ResponseEntity.ok(usuarioService.cadastrar(usuario));
 
+        if (!(usuario.getNome() == null || usuario.getEmail()== null || usuario.getSenha()== null || usuario.getNivelAcesso() == null)){
+                usuarioService.cadastrar(usuario);
+                response = ResponseEntity.ok(usuario);
+            } else {
+            response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
         return response;
     }
 
