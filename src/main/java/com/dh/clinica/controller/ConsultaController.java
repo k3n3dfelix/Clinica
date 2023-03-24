@@ -1,6 +1,7 @@
 package com.dh.clinica.controller;
 
 import com.dh.clinica.model.Consulta;
+import com.dh.clinica.model.Dentista;
 import com.dh.clinica.service.ConsultaService;
 import com.dh.clinica.service.DentistaService;
 import com.dh.clinica.service.PacienteService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/consultas")
@@ -23,13 +25,13 @@ public class ConsultaController {
     private ConsultaService consultaService;
 
     @PostMapping
-    public ResponseEntity<Consulta> cadastrar(@RequestBody Consulta consulta){
-        ResponseEntity<Consulta> response;
-        if(pacienteService.buscar(consulta.getPaciente().getId()).isPresent()
-         && dentistaService.buscarPorId(consulta.getDentista().getId()).isPresent()){
-            response = ResponseEntity.ok(consultaService.cadastrar(consulta));
-        } else{
-            response = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    public ResponseEntity<Consulta> cadastrar(@RequestBody Consulta consulta) {
+        ResponseEntity<Consulta> response = null;
+        if (!(consulta.getId() == null || consulta.getPaciente()== null || consulta.getDentista()== null || consulta.getDate()== null)){
+                consultaService.cadastrar(consulta);
+                response = ResponseEntity.ok(consulta);
+                } else {
+            response = new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         return response;
     }
@@ -37,6 +39,14 @@ public class ConsultaController {
     @GetMapping
     public ResponseEntity<List<Consulta>> buscarTodos(){
         return ResponseEntity.ok(consultaService.buscarTodos());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Consulta>> buscarPorId(@PathVariable Integer id) {
+        if(consultaService.buscarPorId(id).isPresent()){
+            return ResponseEntity.ok(consultaService.buscarPorId(id));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @PutMapping
@@ -55,4 +65,11 @@ public class ConsultaController {
         }
         return response;
     }
+
+//    public boolean validacaoAtributo(Consulta consulta){
+//        if (consulta.getDate().isEmpty()  || consulta.getDate().isBlank()){
+//            return false;
+//        }
+//        return true;
+//    }
 }
