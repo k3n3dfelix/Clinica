@@ -1,8 +1,7 @@
 package com.dh.clinica.controller;
 
 import com.dh.clinica.model.Dentista;
-import com.dh.clinica.model.Paciente;
-import com.dh.clinica.service.DentistaService;
+import com.dh.clinica.service.impl.DentistaServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,14 +18,14 @@ public class DentistaController {
     final static Logger log = Logger.getLogger(DentistaController.class);
 
     @Autowired
-    private DentistaService dentistaService;
+    private DentistaServiceImpl dentistaServiceImpl;
 
     @PostMapping
     public ResponseEntity<Dentista> cadastrar(@RequestBody Dentista dentista) {
         ResponseEntity<Dentista> response = null;
         if (!(dentista.getNome() == null || dentista.getSobrenome()== null || dentista.getMatricula()== null)){
             if (validacaoAtributo(dentista)){
-                dentistaService.cadastrar(dentista);
+                dentistaServiceImpl.salvar(dentista);
                 response = ResponseEntity.ok(dentista);
             } else {
                 response = new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -38,19 +37,19 @@ public class DentistaController {
 
     @GetMapping
     public ResponseEntity<List<Dentista>> listarTodos () {
-        return ResponseEntity.ok(dentistaService.buscarTodos());
+        return ResponseEntity.ok(dentistaServiceImpl.buscarTodos());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Dentista>> buscarPorId(@PathVariable Integer id) {
-        return ResponseEntity.ok(dentistaService.buscarPorId(id));
+        return ResponseEntity.ok(dentistaServiceImpl.buscarPorId(id));
     }
 
     @DeleteMapping("/{id}")
     public  ResponseEntity<String> deletarDentista(@PathVariable Integer id) {
         ResponseEntity<String> response = null;
-        if (dentistaService.buscarPorId(id).isPresent()) {
-            dentistaService.excluir(id);
+        if (dentistaServiceImpl.buscarPorId(id).isPresent()) {
+            dentistaServiceImpl.excluir(id);
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Dentista excluído com sucesso!");
         } else {
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum dentista encontrado!");
@@ -61,8 +60,8 @@ public class DentistaController {
     @PutMapping
     public ResponseEntity<Dentista> atualizar(@RequestBody Dentista dentista) {
         ResponseEntity<Dentista> response;
-        if (dentista.getId() != null && dentistaService.buscarPorId(dentista.getId()).isPresent())
-            response = ResponseEntity.ok(dentistaService.atualizar(dentista));
+        if (dentista.getId() != null && dentistaServiceImpl.buscarPorId(dentista.getId()).isPresent())
+            response = ResponseEntity.ok(dentistaServiceImpl.atualizar(dentista));
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return response;
