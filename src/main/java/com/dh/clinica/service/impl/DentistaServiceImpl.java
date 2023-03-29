@@ -36,6 +36,11 @@ public class DentistaServiceImpl implements IService<Dentista> {
     }
 
     @Override
+    public Optional<Dentista> buscarPorNome(String nome) {
+        return dentistaRepository.findDentistaByNomeContainingIgnoreCase(nome);
+    }
+
+    @Override
     public Dentista atualizar(Dentista dentista) {
         return dentistaRepository.saveAndFlush(dentista);
     }

@@ -28,6 +28,11 @@ public class EnderecoController {
         return ResponseEntity.ok(enderecoService.buscarPorId(id));
     }
 
+    @GetMapping("/rua/{rua}")
+    public ResponseEntity<Optional<Endereco>> buscarPorNome(@PathVariable String rua){
+        return  ResponseEntity.ok(enderecoService.buscarPorNome(rua));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletarEndereco(@PathVariable Integer id) {
         ResponseEntity<String> response;

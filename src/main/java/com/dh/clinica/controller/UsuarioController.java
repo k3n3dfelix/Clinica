@@ -1,5 +1,6 @@
 package com.dh.clinica.controller;
 
+import com.dh.clinica.model.Dentista;
 import com.dh.clinica.model.Usuario;
 import com.dh.clinica.service.impl.UsuarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Usuario>> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioServiceImpl.buscarPorId(id));
+    }
+
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<Optional<Usuario>> buscarPorNome(@PathVariable String nome){
+        return  ResponseEntity.ok(usuarioServiceImpl.buscarPorNome(nome));
     }
 
     @DeleteMapping("/{id}")

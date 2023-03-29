@@ -36,6 +36,11 @@ public class PacienteServiceImpl implements IService<Paciente> {
     }
 
     @Override
+    public Optional<Paciente> buscarPorNome(String name) {
+        return pacienteRepository.findPacienteByNomeContainingIgnoreCase(name);
+    }
+
+    @Override
     public Paciente atualizar(Paciente paciente) {
         return pacienteRepository.saveAndFlush(paciente);
     }

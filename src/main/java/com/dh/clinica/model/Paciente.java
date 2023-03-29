@@ -21,7 +21,7 @@ public class Paciente {
     private String rg;
     private Date dataCadastro;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 

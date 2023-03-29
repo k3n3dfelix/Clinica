@@ -45,6 +45,11 @@ public class DentistaController {
         return ResponseEntity.ok(dentistaServiceImpl.buscarPorId(id));
     }
 
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<Optional<Dentista>> buscarPorNome(@PathVariable String nome){
+        return  ResponseEntity.ok(dentistaServiceImpl.buscarPorNome(nome));
+    }
+
     @DeleteMapping("/{id}")
     public  ResponseEntity<String> deletarDentista(@PathVariable Integer id) {
         ResponseEntity<String> response = null;

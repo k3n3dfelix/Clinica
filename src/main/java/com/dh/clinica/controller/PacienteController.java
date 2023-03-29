@@ -1,5 +1,6 @@
 package com.dh.clinica.controller;
 
+import com.dh.clinica.model.Dentista;
 import com.dh.clinica.model.Paciente;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RestController
@@ -74,5 +76,9 @@ public class PacienteController {
         return true;
     }
 
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<Optional<Paciente>> buscarPorNome(@PathVariable String nome){
+        return  ResponseEntity.ok(pacienteServiceImpl.buscarPorNome(nome));
+    }
 
 }

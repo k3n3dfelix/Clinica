@@ -1,6 +1,8 @@
 package com.dh.clinica.controller;
 
 import com.dh.clinica.model.Consulta;
+import com.dh.clinica.model.Dentista;
+import com.dh.clinica.model.Paciente;
 import com.dh.clinica.service.impl.ConsultaServiceImpl;
 import com.dh.clinica.service.impl.DentistaServiceImpl;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
@@ -23,13 +25,20 @@ public class ConsultaController {
     @Autowired
     private ConsultaServiceImpl consultaServiceImpl;
 
+    @Autowired
+    public ConsultaController(PacienteServiceImpl pacienteServiceImpl, DentistaServiceImpl dentistaServiceImpl, ConsultaServiceImpl consultaServiceImpl) {
+        this.pacienteServiceImpl = pacienteServiceImpl;
+        this.dentistaServiceImpl = dentistaServiceImpl;
+        this.consultaServiceImpl = consultaServiceImpl;
+    }
+
     @PostMapping
     public ResponseEntity<Consulta> cadastrar(@RequestBody Consulta consulta) {
         ResponseEntity<Consulta> response = null;
-        if (!(consulta.getId() == null || consulta.getPaciente()== null || consulta.getDentista()== null || consulta.getDate()== null)){
-                consultaServiceImpl.salvar(consulta);
-                response = ResponseEntity.ok(consulta);
-                } else {
+        if (!(consulta.getPaciente()== null || consulta.getDentista()== null || consulta.getDate()== null)){
+            consultaServiceImpl.salvar(consulta);
+            response = ResponseEntity.ok(consulta);
+        } else {
             response = new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         return response;
