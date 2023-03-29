@@ -1,11 +1,10 @@
 package com.dh.clinica.controller;
 
 import com.dh.clinica.model.Consulta;
-import com.dh.clinica.model.Dentista;
-import com.dh.clinica.model.Paciente;
 import com.dh.clinica.service.impl.ConsultaServiceImpl;
 import com.dh.clinica.service.impl.DentistaServiceImpl;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +17,7 @@ import java.util.Optional;
 @RequestMapping("/consultas")
 public class ConsultaController {
 
+    final static Logger log = Logger.getLogger(ConsultaController.class);
     @Autowired
     private PacienteServiceImpl pacienteServiceImpl;
     @Autowired
@@ -25,15 +25,9 @@ public class ConsultaController {
     @Autowired
     private ConsultaServiceImpl consultaServiceImpl;
 
-    @Autowired
-    public ConsultaController(PacienteServiceImpl pacienteServiceImpl, DentistaServiceImpl dentistaServiceImpl, ConsultaServiceImpl consultaServiceImpl) {
-        this.pacienteServiceImpl = pacienteServiceImpl;
-        this.dentistaServiceImpl = dentistaServiceImpl;
-        this.consultaServiceImpl = consultaServiceImpl;
-    }
-
     @PostMapping
     public ResponseEntity<Consulta> cadastrar(@RequestBody Consulta consulta) {
+        log.debug("Salvando a consulta: " + consulta.toString());
         ResponseEntity<Consulta> response = null;
         if (!(consulta.getPaciente()== null || consulta.getDentista()== null || consulta.getDate()== null)){
             consultaServiceImpl.salvar(consulta);
@@ -46,24 +40,22 @@ public class ConsultaController {
 
     @GetMapping
     public ResponseEntity<List<Consulta>> buscarTodos(){
+        log.debug("Buscando todas as consultas cadastradas...");
         return ResponseEntity.ok(consultaServiceImpl.buscarTodos());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Consulta>> buscarPorId(@PathVariable Integer id) {
+        log.debug("Buscando a consulta com id: " + id);
         if(consultaServiceImpl.buscarPorId(id).isPresent()){
             return ResponseEntity.ok(consultaServiceImpl.buscarPorId(id));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    @PutMapping
-    public ResponseEntity<Consulta> atualizar(@RequestBody Consulta consulta){
-        return ResponseEntity.ok(consultaServiceImpl.atualizar(consulta));
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> excluir(@PathVariable Integer id){
+        log.debug("Excluindo a consulta com id: " + id);
         ResponseEntity<String> response;
         if(consultaServiceImpl.buscarPorId(id).isPresent()){
             consultaServiceImpl.excluir(id);
@@ -73,4 +65,11 @@ public class ConsultaController {
         }
         return response;
     }
+
+    @PutMapping
+    public ResponseEntity<Consulta> atualizar(@RequestBody Consulta consulta){
+        log.debug("Atualizando a consulta: " + consulta.toString());
+        return ResponseEntity.ok(consultaServiceImpl.atualizar(consulta));
+    }
+
 }

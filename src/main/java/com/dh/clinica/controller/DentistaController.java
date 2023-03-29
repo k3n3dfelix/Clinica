@@ -22,6 +22,7 @@ public class DentistaController {
 
     @PostMapping
     public ResponseEntity<Dentista> cadastrar(@RequestBody Dentista dentista) {
+        log.debug("Salvando o dentista: " + dentista.toString());
         ResponseEntity<Dentista> response = null;
         if (!(dentista.getNome() == null || dentista.getSobrenome()== null || dentista.getMatricula()== null)){
             if (validacaoAtributo(dentista)){
@@ -37,21 +38,25 @@ public class DentistaController {
 
     @GetMapping
     public ResponseEntity<List<Dentista>> listarTodos () {
+        log.debug("Buscando todos os dentistas cadastrados...");
         return ResponseEntity.ok(dentistaServiceImpl.buscarTodos());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Optional<Dentista>> buscarPorId(@PathVariable Integer id) {
+        log.debug("Buscando o dentista com id: " + id);
         return ResponseEntity.ok(dentistaServiceImpl.buscarPorId(id));
     }
 
     @GetMapping("/nome/{nome}")
     public ResponseEntity<Optional<Dentista>> buscarPorNome(@PathVariable String nome){
+        log.debug("Buscando o dentista: " + nome);
         return  ResponseEntity.ok(dentistaServiceImpl.buscarPorNome(nome));
     }
 
     @DeleteMapping("/{id}")
     public  ResponseEntity<String> deletarDentista(@PathVariable Integer id) {
+        log.debug("Excluindo o dentista com id: " + id);
         ResponseEntity<String> response = null;
         if (dentistaServiceImpl.buscarPorId(id).isPresent()) {
             dentistaServiceImpl.excluir(id);
@@ -64,6 +69,7 @@ public class DentistaController {
 
     @PutMapping
     public ResponseEntity<Dentista> atualizar(@RequestBody Dentista dentista) {
+        log.debug("Atualizando o dentista: " + dentista.toString());
         ResponseEntity<Dentista> response;
         if (dentista.getId() != null && dentistaServiceImpl.buscarPorId(dentista.getId()).isPresent())
             response = ResponseEntity.ok(dentistaServiceImpl.atualizar(dentista));
