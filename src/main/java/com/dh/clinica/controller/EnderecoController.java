@@ -49,7 +49,7 @@ public class EnderecoController {
     }
 
     @GetMapping("/rua/{rua}")
-    public ResponseEntity<Optional<Endereco>> buscarPorNome(@PathVariable String rua){
+    public ResponseEntity<List<Endereco>> buscarPorNome(@PathVariable String rua){
         log.debug("Buscando o endereço pela rua: " + rua);
         return  ResponseEntity.ok(enderecoService.buscarPorNome(rua));
     }

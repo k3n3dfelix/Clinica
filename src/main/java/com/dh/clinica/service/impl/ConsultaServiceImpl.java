@@ -35,8 +35,8 @@ public class ConsultaServiceImpl implements IService<Consulta> {
     }
 
     @Override
-    public Optional<Consulta> buscarPorNome(String name) {
-        return Optional.empty();
+    public List<Consulta> buscarPorNome(String name) {
+        return null;
     }
 
     @Override

@@ -36,7 +36,7 @@ public class EnderecoServiceImpl implements IService<Endereco> {
     }
 
     @Override
-    public Optional<Endereco> buscarPorNome(String name) {
+    public List<Endereco> buscarPorNome(String name) {
         return enderecoRepository.findEnderecoByRuaContainingIgnoreCase(name);
     }
 

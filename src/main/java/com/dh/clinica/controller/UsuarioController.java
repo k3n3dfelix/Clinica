@@ -49,7 +49,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<Optional<Usuario>> buscarPorNome(@PathVariable String nome){
+    public ResponseEntity<List<Usuario>> buscarPorNome(@PathVariable String nome){
         log.debug("Buscando o usuário: " + nome);
         return  ResponseEntity.ok(usuarioServiceImpl.buscarPorNome(nome));
     }

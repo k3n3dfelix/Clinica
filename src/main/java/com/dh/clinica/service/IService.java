@@ -10,7 +10,7 @@ public interface IService<T> {
     List<T> buscarTodos();
 
     Optional<T> buscarPorId(Integer id);
-    Optional<T> buscarPorNome(String name);
+    List<T> buscarPorNome(String name);
 
     T atualizar (T t);
 

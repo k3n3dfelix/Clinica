@@ -36,7 +36,7 @@ public class UsuarioServiceImpl implements IService<Usuario> {
     }
 
     @Override
-    public Optional<Usuario> buscarPorNome(String name) {
+    public List<Usuario> buscarPorNome(String name) {
         return usuarioRepository.findUsuarioByNomeContainingIgnoreCase(name);
     }
 
