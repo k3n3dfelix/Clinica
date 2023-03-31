@@ -30,8 +30,12 @@ public class ConsultaController {
         log.debug("Salvando a consulta: " + consulta.toString());
         ResponseEntity<Consulta> response = null;
         if (!(consulta.getPaciente()== null || consulta.getDentista()== null || consulta.getDate()== null)){
-            consultaServiceImpl.salvar(consulta);
-            response = ResponseEntity.ok(consulta);
+            if(pacienteServiceImpl.buscarPorId(consulta.getPaciente().getId()).isPresent() && dentistaServiceImpl.buscarPorId(consulta.getDentista().getId()).isPresent()){
+                consultaServiceImpl.salvar(consulta);
+                response = ResponseEntity.ok(consulta);
+            } else {
+                response = new ResponseEntity(HttpStatus.NOT_FOUND);
+            }
         } else {
             response = new ResponseEntity(HttpStatus.BAD_REQUEST);
         }

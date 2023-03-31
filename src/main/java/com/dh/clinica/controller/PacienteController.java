@@ -17,12 +17,8 @@ public class PacienteController {
 
     final static Logger log = Logger.getLogger(PacienteController.class);
 
-    private PacienteServiceImpl pacienteServiceImpl;
-
     @Autowired
-    public PacienteController(PacienteServiceImpl pacienteServiceImpl) {
-        this.pacienteServiceImpl = pacienteServiceImpl;
-    }
+    private PacienteServiceImpl pacienteServiceImpl;
 
     @PostMapping()
     public ResponseEntity<Paciente> cadastrar(@RequestBody Paciente paciente) {
@@ -47,9 +43,9 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Paciente> buscar(@PathVariable Integer id) {
+    public ResponseEntity<Optional<Paciente>> buscar(@PathVariable Integer id) {
         log.debug("Buscando o paciente com id: " + id);
-        return ResponseEntity.ok(pacienteServiceImpl.buscarPorId(id).orElse(null));
+        return ResponseEntity.ok(pacienteServiceImpl.buscarPorId(id));
     }
 
     @GetMapping("/nome/{nome}")
