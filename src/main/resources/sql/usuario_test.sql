@@ -1,0 +1,1 @@
+INSERT INTO USUARIO (nome, email, senha, nivel_Acesso) VALUES ('João', 'joao@email.com', 'senha123', 'administrador');
