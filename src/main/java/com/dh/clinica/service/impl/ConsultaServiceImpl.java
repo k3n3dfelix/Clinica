@@ -2,7 +2,7 @@ package com.dh.clinica.service.impl;
 
 import com.dh.clinica.model.Consulta;
 import com.dh.clinica.repository.IConsultaRepository;
-import com.dh.clinica.service.IService;
+import com.dh.clinica.service.IConsultaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ConsultaServiceImpl implements IService<Consulta> {
+public class ConsultaServiceImpl implements IConsultaService {
 
     private IConsultaRepository consultaRepository;
 

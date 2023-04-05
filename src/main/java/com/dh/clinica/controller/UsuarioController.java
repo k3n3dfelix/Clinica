@@ -1,5 +1,7 @@
 package com.dh.clinica.controller;
 
+import com.dh.clinica.controller.dto.UsuarioRequest;
+import com.dh.clinica.controller.dto.UsuarioResponse;
 import com.dh.clinica.model.Usuario;
 import com.dh.clinica.service.impl.UsuarioServiceImpl;
 import org.apache.log4j.Logger;
@@ -21,13 +23,13 @@ public class UsuarioController {
     private UsuarioServiceImpl usuarioServiceImpl;
 
     @PostMapping()
-    public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
-        log.debug("Salvando o usuário: " + usuario.toString());
-        ResponseEntity<Usuario> response = null;
-        if (!(usuario.getNome() == null || usuario.getEmail()== null || usuario.getSenha()== null || usuario.getNivelAcesso() == null)){
-            if (validacaoAtributo(usuario)){
-                usuarioServiceImpl.salvar(usuario);
-                response = ResponseEntity.ok(usuario);
+    public ResponseEntity<UsuarioResponse> cadastrar(@RequestBody UsuarioRequest request) {
+        log.debug("Salvando o usuário: " + request.toString());
+        ResponseEntity response = null;
+        if (!(request.getNome() == null || request.getEmail()== null || request.getSenha()== null || request.getNivelAcesso() == null)){
+            if (validacaoAtributo(request)){
+                UsuarioResponse usuarioResponse = usuarioServiceImpl.salvar(request);
+                response = ResponseEntity.ok(usuarioResponse);
             } else {
                 response = new ResponseEntity(HttpStatus.BAD_REQUEST);
             }} else {
@@ -37,21 +39,25 @@ public class UsuarioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> listarTodos() {
+    public ResponseEntity<List<UsuarioResponse>> listarTodos() {
         log.debug("Buscando todos os usuários cadastrados...");
-        return ResponseEntity.ok(usuarioServiceImpl.buscarTodos());
+        ResponseEntity reponse = null;
+        List<UsuarioResponse> responses = usuarioServiceImpl.buscarTodos();
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Usuario>> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<Optional<UsuarioResponse>> buscarPorId(@PathVariable Integer id) {
         log.debug("Buscando o usuário com id: " + id);
         return ResponseEntity.ok(usuarioServiceImpl.buscarPorId(id));
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<Usuario>> buscarPorNome(@PathVariable String nome){
+    public ResponseEntity<List<UsuarioResponse>> buscarPorNome(@PathVariable String nome){
         log.debug("Buscando o usuário: " + nome);
-        return  ResponseEntity.ok(usuarioServiceImpl.buscarPorNome(nome));
+        ResponseEntity reponse = null;
+        List<UsuarioResponse> responses = usuarioServiceImpl.buscarPorNome(nome);
+        return ResponseEntity.ok(responses);
     }
 
     @DeleteMapping("/{id}")
@@ -68,18 +74,18 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) {
-        log.debug("Atualizando o usuário: " + usuario.toString());
-        ResponseEntity<Usuario> response;
-        if (usuario.getId() != null && usuarioServiceImpl.buscarPorId(usuario.getId()).isPresent())
-            response = ResponseEntity.ok(usuarioServiceImpl.atualizar(usuario));
+    public ResponseEntity<UsuarioResponse> atualizar(@RequestBody UsuarioRequest request) {
+        log.debug("Atualizando o usuário: " + request.toString());
+        ResponseEntity response = null;
+        if (request.getNome() != null && usuarioServiceImpl.buscarPorId(request.getId()).isPresent())
+            response = ResponseEntity.ok(usuarioServiceImpl.atualizar(request));
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return response;
     }
 
-    public boolean validacaoAtributo(Usuario usuario){
-        if (usuario.getNome().isEmpty() || usuario.getNome().isBlank()){
+    public boolean validacaoAtributo(UsuarioRequest request){
+        if (request.getNome().isEmpty() || request.getNome().isBlank()){
             return false;
         }
         return true;

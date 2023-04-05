@@ -2,7 +2,7 @@ package com.dh.clinica.service.impl;
 
 import com.dh.clinica.model.Dentista;
 import com.dh.clinica.repository.IDentistaRepository;
-import com.dh.clinica.service.IService;
+import com.dh.clinica.service.IDentistaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DentistaServiceImpl implements IService<Dentista> {
+public class DentistaServiceImpl implements IDentistaService {
 
 
     private IDentistaRepository dentistaRepository;

@@ -2,7 +2,8 @@ package com.dh.clinica.service.impl;
 
 import com.dh.clinica.model.Endereco;
 import com.dh.clinica.repository.IEnderecoRepository;
-import com.dh.clinica.service.IService;
+import com.dh.clinica.service.IDentistaService;
+import com.dh.clinica.service.IEnderecoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class EnderecoServiceImpl implements IService<Endereco> {
+public class EnderecoServiceImpl implements IEnderecoService {
 
 
     private IEnderecoRepository enderecoRepository;
