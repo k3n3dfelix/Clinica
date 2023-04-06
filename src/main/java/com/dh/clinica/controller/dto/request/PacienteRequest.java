@@ -18,7 +18,6 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PacienteRequest {
 
-    private Integer id;
     private String nome;
     private String sobrenome;
     private String rg;

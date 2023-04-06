@@ -16,7 +16,6 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConsultaRequest {
 
-    private Integer id;
     private Paciente paciente;
     private Dentista dentista;
     private Date date;
