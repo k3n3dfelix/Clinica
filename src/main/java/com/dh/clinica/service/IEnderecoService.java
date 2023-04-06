@@ -1,21 +1,22 @@
 package com.dh.clinica.service;
 
-import com.dh.clinica.model.Endereco;
+import com.dh.clinica.controller.dto.request.EnderecoRequest;
+import com.dh.clinica.controller.dto.response.EnderecoResponse;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IEnderecoService {
 
-    Endereco salvar(Endereco endereco);
+    EnderecoResponse salvar(EnderecoRequest request);
 
-    List<Endereco> buscarTodos();
+    List<EnderecoResponse> buscarTodos();
 
-    Optional<Endereco> buscarPorId(Integer id);
+    Optional<EnderecoResponse> buscarPorId(Integer id);
 
-    List<Endereco> buscarPorNome(String name);
+    List<EnderecoResponse> buscarPorRua(String rua);
 
-    Endereco atualizar (Endereco endereco);
+    EnderecoResponse atualizar (EnderecoRequest request);
 
     void excluir(Integer id);
 

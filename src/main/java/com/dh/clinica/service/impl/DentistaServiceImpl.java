@@ -1,17 +1,21 @@
 package com.dh.clinica.service.impl;
 
+import com.dh.clinica.controller.dto.request.DentistaRequest;
+import com.dh.clinica.controller.dto.update.DentistaRequestUpdate;
+import com.dh.clinica.controller.dto.response.DentistaResponse;
 import com.dh.clinica.model.Dentista;
 import com.dh.clinica.repository.IDentistaRepository;
 import com.dh.clinica.service.IDentistaService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class DentistaServiceImpl implements IDentistaService {
-
 
     private IDentistaRepository dentistaRepository;
 
@@ -21,32 +25,57 @@ public class DentistaServiceImpl implements IDentistaService {
     }
 
     @Override
-    public Dentista salvar(Dentista dentista) {
-        return dentistaRepository.save(dentista);
+    public DentistaResponse salvar(DentistaRequest request) {
+        ObjectMapper mapper = new ObjectMapper();
+        Dentista dentista = mapper.convertValue(request, Dentista.class);
+        Dentista dentistaSalvo = dentistaRepository.save(dentista);
+        DentistaResponse dentistaResponse = mapper.convertValue(dentistaSalvo, DentistaResponse.class);
+        return dentistaResponse;
     }
 
     @Override
-    public List<Dentista> buscarTodos() {
-        return dentistaRepository.findAll();
+    public List<DentistaResponse> buscarTodos() {
+        List<Dentista> dentistas = dentistaRepository.findAll();
+        List<DentistaResponse> responses = new ArrayList<>();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        for(Dentista dentista: dentistas){
+            responses.add(mapper.convertValue(dentista, DentistaResponse.class));
+        }
+        return responses;
     }
 
     @Override
-    public Optional<Dentista> buscarPorId(Integer id) {
-        return dentistaRepository.findById(id);
+    public Optional<DentistaResponse> buscarPorId(Integer id) {
+        Optional<Dentista> dentista = dentistaRepository.findById(id);
+        ObjectMapper mapper = new ObjectMapper();
+        return dentista.map(dentista1 -> mapper.convertValue(dentista1, DentistaResponse.class));
     }
 
     @Override
-    public List<Dentista> buscarPorNome(String nome) {
-        return dentistaRepository.findDentistaByNomeContainingIgnoreCase(nome);
+    public List<DentistaResponse> buscarPorNome(String name) {
+        List<Dentista> dentistas = dentistaRepository.findDentistaByNomeContainingIgnoreCase(name);
+        List<DentistaResponse> responses = new ArrayList<>();
+
+        ObjectMapper mapper = new ObjectMapper();
+        for(Dentista dentista: dentistas){
+            responses.add(mapper.convertValue(dentista, DentistaResponse.class));
+        }
+        return responses;
     }
 
     @Override
-    public Dentista atualizar(Dentista dentista) {
-        return dentistaRepository.saveAndFlush(dentista);
+    public DentistaResponse atualizar(DentistaRequestUpdate request) {
+        ObjectMapper mapper = new ObjectMapper();
+        Dentista dentista = mapper.convertValue(request, Dentista.class);
+        Dentista dentistaSalvo = dentistaRepository.saveAndFlush(dentista);
+        DentistaResponse dentistaResponse = mapper.convertValue(dentistaSalvo, DentistaResponse.class);
+        return dentistaResponse;
+
     }
 
     @Override
-    public void excluir(Integer id) {
-        dentistaRepository.deleteById(id);
+    public void excluir(Integer id) {dentistaRepository.deleteById(id);
     }
 }

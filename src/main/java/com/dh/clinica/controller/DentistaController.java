@@ -1,6 +1,8 @@
 package com.dh.clinica.controller;
 
-import com.dh.clinica.model.Dentista;
+import com.dh.clinica.controller.dto.request.DentistaRequest;
+import com.dh.clinica.controller.dto.update.DentistaRequestUpdate;
+import com.dh.clinica.controller.dto.response.DentistaResponse;
 import com.dh.clinica.service.impl.DentistaServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +22,14 @@ public class DentistaController {
     @Autowired
     private DentistaServiceImpl dentistaServiceImpl;
 
-    @PostMapping
-    public ResponseEntity<Dentista> cadastrar(@RequestBody Dentista dentista) {
-        log.debug("Salvando o dentista: " + dentista.toString());
-        ResponseEntity<Dentista> response = null;
-        if (!(dentista.getNome() == null || dentista.getSobrenome()== null || dentista.getMatricula()== null)){
-            if (validacaoAtributo(dentista)){
-                dentistaServiceImpl.salvar(dentista);
-                response = ResponseEntity.ok(dentista);
+    @PostMapping()
+    public ResponseEntity<DentistaResponse> cadastrar(@RequestBody DentistaRequest request) {
+        log.debug("Salvando o dentista: " + request.toString());
+        ResponseEntity response = null;
+        if (!(request.getNome() == null || request.getMatricula()== null)){
+            if (validacaoAtributo(request)){
+                DentistaResponse dentistaResponse = dentistaServiceImpl.salvar(request);
+                response = ResponseEntity.ok(dentistaResponse);
             } else {
                 response = new ResponseEntity(HttpStatus.BAD_REQUEST);
             }} else {
@@ -37,51 +39,57 @@ public class DentistaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Dentista>> listarTodos () {
+    public ResponseEntity<List<DentistaResponse>> listarTodos() {
         log.debug("Buscando todos os dentistas cadastrados...");
-        return ResponseEntity.ok(dentistaServiceImpl.buscarTodos());
+        ResponseEntity reponse = null;
+        List<DentistaResponse> responses = dentistaServiceImpl.buscarTodos();
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Dentista>> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<Optional<DentistaResponse>> buscarPorId(@PathVariable Integer id) {
         log.debug("Buscando o dentista com id: " + id);
         return ResponseEntity.ok(dentistaServiceImpl.buscarPorId(id));
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<Dentista>> buscarPorNome(@PathVariable String nome){
+    public ResponseEntity<List<DentistaResponse>> buscarPorNome(@PathVariable String nome){
         log.debug("Buscando o dentista: " + nome);
-        return  ResponseEntity.ok(dentistaServiceImpl.buscarPorNome(nome));
+        ResponseEntity reponse = null;
+        List<DentistaResponse> responses = dentistaServiceImpl.buscarPorNome(nome);
+        return ResponseEntity.ok(responses);
     }
 
     @DeleteMapping("/{id}")
-    public  ResponseEntity<String> deletarDentista(@PathVariable Integer id) {
+    public ResponseEntity<String> deletarDentista(@PathVariable Integer id) {
         log.debug("Excluindo o dentista com id: " + id);
-        ResponseEntity<String> response = null;
-        if (dentistaServiceImpl.buscarPorId(id).isPresent()) {
+        ResponseEntity<String> response;
+        if(dentistaServiceImpl.buscarPorId(id).isPresent()) {
             dentistaServiceImpl.excluir(id);
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Dentista excluído com sucesso!");
-        } else {
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum dentista encontrado!");
+        }else{
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentista não encontrado!");
         }
         return response;
     }
 
     @PutMapping
-    public ResponseEntity<Dentista> atualizar(@RequestBody Dentista dentista) {
-        log.debug("Atualizando o dentista: " + dentista.toString());
-        ResponseEntity<Dentista> response;
-        if (dentista.getId() != null && dentistaServiceImpl.buscarPorId(dentista.getId()).isPresent())
-            response = ResponseEntity.ok(dentistaServiceImpl.atualizar(dentista));
+    public ResponseEntity<DentistaResponse> atualizar(@RequestBody DentistaRequestUpdate request) {
+        log.debug("Atualizando o dentista: " + request.toString());
+        ResponseEntity response = null;
+        if (request.getNome() != null && dentistaServiceImpl.buscarPorId(request.getId()).isPresent())
+            response = ResponseEntity.ok(dentistaServiceImpl.atualizar(request));
         else
             response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return response;
     }
 
-    public boolean validacaoAtributo(Dentista dentista){
-        if (dentista.getMatricula().isEmpty() || dentista.getMatricula().isBlank()){
+    public boolean validacaoAtributo(DentistaRequest request){
+        if (request.getNome().isEmpty() || request.getNome().isBlank()){
             return false;
         }
         return true;
     }
+
+
 }

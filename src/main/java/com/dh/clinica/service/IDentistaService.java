@@ -1,22 +1,26 @@
 package com.dh.clinica.service;
 
-import com.dh.clinica.model.Dentista;
+import com.dh.clinica.controller.dto.request.DentistaRequest;
+import com.dh.clinica.controller.dto.response.DentistaResponse;
+import com.dh.clinica.controller.dto.update.DentistaRequestUpdate;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IDentistaService {
 
-    Dentista salvar(Dentista dentista);
+    DentistaResponse salvar(DentistaRequest request);
 
-    List<Dentista> buscarTodos();
+    List<DentistaResponse> buscarTodos();
 
-    Optional<Dentista> buscarPorId(Integer id);
+    Optional<DentistaResponse> buscarPorId(Integer id);
 
-    List<Dentista> buscarPorNome(String name);
+    List<DentistaResponse> buscarPorNome(String name);
 
-    Dentista atualizar (Dentista dentista);
+    DentistaResponse atualizar (DentistaRequestUpdate request);
 
     void excluir(Integer id);
+
+
 
 }

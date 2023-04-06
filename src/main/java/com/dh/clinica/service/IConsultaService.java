@@ -1,22 +1,22 @@
 package com.dh.clinica.service;
 
-import com.dh.clinica.model.Consulta;
+import com.dh.clinica.controller.dto.request.ConsultaRequest;
+import com.dh.clinica.controller.dto.response.ConsultaResponse;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IConsultaService {
 
-    Consulta salvar(Consulta consulta);
+    ConsultaResponse salvar(ConsultaRequest request);
 
-    List<Consulta> buscarTodos();
+    List<ConsultaResponse> buscarTodos();
 
-    Optional<Consulta> buscarPorId(Integer id);
+    Optional<ConsultaResponse> buscarPorId(Integer id);
 
-    List<Consulta> buscarPorNome(String name);
-
-    Consulta atualizar (Consulta consulta);
+    ConsultaResponse atualizar (ConsultaRequest request);
 
     void excluir(Integer id);
+
 
 }

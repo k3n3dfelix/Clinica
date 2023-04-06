@@ -1,6 +1,7 @@
 package com.dh.clinica.controller;
 
-import com.dh.clinica.model.Consulta;
+import com.dh.clinica.controller.dto.request.ConsultaRequest;
+import com.dh.clinica.controller.dto.response.ConsultaResponse;
 import com.dh.clinica.service.impl.ConsultaServiceImpl;
 import com.dh.clinica.service.impl.DentistaServiceImpl;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
@@ -26,13 +27,13 @@ public class ConsultaController {
     private ConsultaServiceImpl consultaServiceImpl;
 
     @PostMapping
-    public ResponseEntity<Consulta> cadastrar(@RequestBody Consulta consulta) {
+    public ResponseEntity<ConsultaResponse> cadastrar(@RequestBody ConsultaRequest consulta) {
         log.debug("Salvando a consulta: " + consulta.toString());
-        ResponseEntity<Consulta> response = null;
+        ResponseEntity<ConsultaResponse> response = null;
         if (!(consulta.getPaciente()== null || consulta.getDentista()== null || consulta.getDate()== null)){
             if(pacienteServiceImpl.buscarPorId(consulta.getPaciente().getId()).isPresent() && dentistaServiceImpl.buscarPorId(consulta.getDentista().getId()).isPresent()){
-                consultaServiceImpl.salvar(consulta);
-                response = ResponseEntity.ok(consulta);
+                ConsultaResponse consultaResponse = consultaServiceImpl.salvar(consulta);
+                response = ResponseEntity.ok(consultaResponse);
             } else {
                 response = new ResponseEntity(HttpStatus.NOT_FOUND);
             }
@@ -43,37 +44,41 @@ public class ConsultaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Consulta>> buscarTodos(){
-        log.debug("Buscando todas as consultas cadastradas...");
-        return ResponseEntity.ok(consultaServiceImpl.buscarTodos());
+    public ResponseEntity<List<ConsultaResponse>> listarTodos() {
+        log.debug("Buscando todos os consultas cadastrados...");
+        ResponseEntity reponse = null;
+        List<ConsultaResponse> responses = consultaServiceImpl.buscarTodos();
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Consulta>> buscarPorId(@PathVariable Integer id) {
-        log.debug("Buscando a consulta com id: " + id);
-        if(consultaServiceImpl.buscarPorId(id).isPresent()){
-            return ResponseEntity.ok(consultaServiceImpl.buscarPorId(id));
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    public ResponseEntity<Optional<ConsultaResponse>> buscarPorId(@PathVariable Integer id) {
+        log.debug("Buscando o consulta com id: " + id);
+        return ResponseEntity.ok(consultaServiceImpl.buscarPorId(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> excluir(@PathVariable Integer id){
-        log.debug("Excluindo a consulta com id: " + id);
+    public ResponseEntity<String> deletarConsulta(@PathVariable Integer id) {
+        log.debug("Excluindo o consulta com id: " + id);
         ResponseEntity<String> response;
-        if(consultaServiceImpl.buscarPorId(id).isPresent()){
+        if(consultaServiceImpl.buscarPorId(id).isPresent()) {
             consultaServiceImpl.excluir(id);
-            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Consulta excluída com sucesso!");
-        } else {
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma consulta encontrada!");
+            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Consulta excluído com sucesso!");
+        }else{
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Consulta não encontrado!");
         }
         return response;
     }
 
     @PutMapping
-    public ResponseEntity<Consulta> atualizar(@RequestBody Consulta consulta){
-        log.debug("Atualizando a consulta: " + consulta.toString());
-        return ResponseEntity.ok(consultaServiceImpl.atualizar(consulta));
+    public ResponseEntity<ConsultaResponse> atualizar(@RequestBody ConsultaRequest request) {
+        log.debug("Atualizando o consulta: " + request.toString());
+        ResponseEntity response = null;
+        if (request.getId() != null && consultaServiceImpl.buscarPorId(request.getId()).isPresent())
+            response = ResponseEntity.ok(consultaServiceImpl.atualizar(request));
+        else
+            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return response;
     }
 
 }

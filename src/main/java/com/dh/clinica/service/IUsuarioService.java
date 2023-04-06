@@ -1,8 +1,7 @@
 package com.dh.clinica.service;
 
-import com.dh.clinica.controller.dto.UsuarioRequest;
-import com.dh.clinica.controller.dto.UsuarioResponse;
-import com.dh.clinica.model.Usuario;
+import com.dh.clinica.controller.dto.request.UsuarioRequest;
+import com.dh.clinica.controller.dto.response.UsuarioResponse;
 
 import java.util.List;
 import java.util.Optional;

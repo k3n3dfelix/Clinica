@@ -1,21 +1,22 @@
 package com.dh.clinica.service;
 
-import com.dh.clinica.model.Paciente;
+import com.dh.clinica.controller.dto.request.PacienteRequest;
+import com.dh.clinica.controller.dto.response.PacienteResponse;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IPacienteService {
 
-    Paciente salvar(Paciente paciente);
+    PacienteResponse salvar(PacienteRequest request);
 
-    List<Paciente> buscarTodos();
+    List<PacienteResponse> buscarTodos();
 
-    Optional<Paciente> buscarPorId(Integer id);
+    Optional<PacienteResponse> buscarPorId(Integer id);
 
-    List<Paciente> buscarPorNome(String name);
+    List<PacienteResponse> buscarPorNome(String name);
 
-    Paciente atualizar (Paciente paciente);
+    PacienteResponse atualizar (PacienteRequest request);
 
     void excluir(Integer id);
 

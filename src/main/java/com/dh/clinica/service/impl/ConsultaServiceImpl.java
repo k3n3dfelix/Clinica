@@ -1,11 +1,15 @@
 package com.dh.clinica.service.impl;
 
+import com.dh.clinica.controller.dto.request.ConsultaRequest;
+import com.dh.clinica.controller.dto.response.ConsultaResponse;
 import com.dh.clinica.model.Consulta;
 import com.dh.clinica.repository.IConsultaRepository;
 import com.dh.clinica.service.IConsultaService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,33 +24,48 @@ public class ConsultaServiceImpl implements IConsultaService {
     }
 
     @Override
-    public Consulta salvar(Consulta consulta) {
-        return consultaRepository.save(consulta);
+    public ConsultaResponse salvar(ConsultaRequest request) {
+        ObjectMapper mapper = new ObjectMapper();
+        Consulta consulta = mapper.convertValue(request, Consulta.class);
+        Consulta consultaSalvo = consultaRepository.save(consulta);
+        ConsultaResponse consultaResponse = mapper.convertValue(consultaSalvo, ConsultaResponse.class);
+        return consultaResponse;
     }
 
     @Override
-    public List<Consulta> buscarTodos() {
-        return consultaRepository.findAll();
+    public List<ConsultaResponse> buscarTodos() {
+        List<Consulta> consultas = consultaRepository.findAll();
+        List<ConsultaResponse> responses = new ArrayList<>();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        for(Consulta consulta: consultas){
+            responses.add(mapper.convertValue(consulta, ConsultaResponse.class));
+        }
+        return responses;
     }
 
     @Override
-    public Optional<Consulta> buscarPorId(Integer id) {
-        return consultaRepository.findById(id);
+    public Optional<ConsultaResponse> buscarPorId(Integer id) {
+        Optional<Consulta> consulta = consultaRepository.findById(id);
+        ObjectMapper mapper = new ObjectMapper();
+        return consulta.map(consulta1 -> mapper.convertValue(consulta1, ConsultaResponse.class));
+    }
+
+
+    @Override
+    public ConsultaResponse atualizar(ConsultaRequest request) {
+        ObjectMapper mapper = new ObjectMapper();
+        Consulta consulta = mapper.convertValue(request, Consulta.class);
+        Consulta consultaSalvo = consultaRepository.saveAndFlush(consulta);
+        ConsultaResponse consultaResponse = mapper.convertValue(consultaSalvo, ConsultaResponse.class);
+        return consultaResponse;
+
     }
 
     @Override
-    public List<Consulta> buscarPorNome(String name) {
-        return null;
+    public void excluir(Integer id) {consultaRepository.deleteById(id);
     }
 
-    @Override
-    public Consulta atualizar(Consulta consulta) {
-        return consultaRepository.saveAndFlush(consulta);
-    }
-
-    @Override
-    public void excluir(Integer id) {
-        consultaRepository.deleteById(id);
-    }
 
 }

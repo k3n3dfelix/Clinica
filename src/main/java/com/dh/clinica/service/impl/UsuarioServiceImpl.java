@@ -1,7 +1,7 @@
 package com.dh.clinica.service.impl;
 
-import com.dh.clinica.controller.dto.UsuarioRequest;
-import com.dh.clinica.controller.dto.UsuarioResponse;
+import com.dh.clinica.controller.dto.request.UsuarioRequest;
+import com.dh.clinica.controller.dto.response.UsuarioResponse;
 import com.dh.clinica.model.Usuario;
 import com.dh.clinica.repository.IUsuarioRepository;
 import com.dh.clinica.service.IUsuarioService;
@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Service
 public class UsuarioServiceImpl implements IUsuarioService {
-
 
     private IUsuarioRepository usuarioRepository;
 

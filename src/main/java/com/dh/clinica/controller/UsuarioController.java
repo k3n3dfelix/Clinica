@@ -1,8 +1,7 @@
 package com.dh.clinica.controller;
 
-import com.dh.clinica.controller.dto.UsuarioRequest;
-import com.dh.clinica.controller.dto.UsuarioResponse;
-import com.dh.clinica.model.Usuario;
+import com.dh.clinica.controller.dto.request.UsuarioRequest;
+import com.dh.clinica.controller.dto.response.UsuarioResponse;
 import com.dh.clinica.service.impl.UsuarioServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import java.util.Optional;
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-    final static Logger log = Logger.getLogger(PacienteController.class);
+    final static Logger log = Logger.getLogger(UsuarioController.class);
 
     @Autowired
     private UsuarioServiceImpl usuarioServiceImpl;
