@@ -3,6 +3,8 @@ package com.dh.clinica.controller;
 import com.dh.clinica.controller.dto.request.PacienteRequest;
 import com.dh.clinica.controller.dto.response.PacienteResponse;
 import com.dh.clinica.controller.dto.request.update.PacienteRequestUpdate;
+import com.dh.clinica.exceptions.InvalidDataException;
+import com.dh.clinica.exceptions.ResourceNotFoundException;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,14 +63,18 @@ public class PacienteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletarPaciente(@PathVariable Integer id) {
+    public ResponseEntity<String> deletarPaciente(@PathVariable Integer id) throws ResourceNotFoundException, InvalidDataException {
         log.debug("Excluindo o paciente com id: " + id);
         ResponseEntity<String> response;
         if(pacienteServiceImpl.buscarPorId(id).isPresent()) {
-            pacienteServiceImpl.excluir(id);
+            try {
+                pacienteServiceImpl.excluir(id);
+            } catch (Exception e){
+                throw new InvalidDataException("Erro! Paciente não foi excluído!");
+            }
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Paciente excluído com sucesso!");
         }else{
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado!");
+            throw new ResourceNotFoundException("Paciente não encontrado!");
         }
         return response;
     }

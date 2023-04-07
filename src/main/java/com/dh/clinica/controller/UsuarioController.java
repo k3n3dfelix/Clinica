@@ -3,6 +3,8 @@ package com.dh.clinica.controller;
 import com.dh.clinica.controller.dto.request.UsuarioRequest;
 import com.dh.clinica.controller.dto.response.UsuarioResponse;
 import com.dh.clinica.controller.dto.request.update.UsuarioRequestUpdate;
+import com.dh.clinica.exceptions.InvalidDataException;
+import com.dh.clinica.exceptions.ResourceNotFoundException;
 import com.dh.clinica.service.impl.UsuarioServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ public class UsuarioController {
     private UsuarioServiceImpl usuarioServiceImpl;
 
     @PostMapping()
-    public ResponseEntity<UsuarioResponse> cadastrar(@RequestBody UsuarioRequest request) {
+    public ResponseEntity<UsuarioResponse> cadastrar(@RequestBody UsuarioRequest request) throws InvalidDataException {
         log.debug("Salvando o usuário: " + request.toString());
         ResponseEntity response = null;
         if (!(request.getNome() == null || request.getEmail()== null || request.getSenha()== null || request.getNivelAcesso() == null)){
@@ -31,9 +33,9 @@ public class UsuarioController {
                 UsuarioResponse usuarioResponse = usuarioServiceImpl.salvar(request);
                 response = ResponseEntity.ok(usuarioResponse);
             } else {
-                response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+                throw new InvalidDataException("O Atributo 'nome' está em branco ou vazio! Cadastro não realizado!");
             }} else {
-            response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new InvalidDataException("Informações inválidas! Cadastro não realizado!");
         }
         return response;
     }
@@ -47,40 +49,48 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<UsuarioResponse>> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<Optional<UsuarioResponse>> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Buscando o usuário com id: " + id);
+        if(usuarioServiceImpl.buscarPorId(id).isPresent()) {
         return ResponseEntity.ok(usuarioServiceImpl.buscarPorId(id));
+        } else{
+            throw new ResourceNotFoundException("Usuario não encontrado!");
+        }
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<UsuarioResponse>> buscarPorNome(@PathVariable String nome){
+    public ResponseEntity<List<UsuarioResponse>> buscarPorNome(@PathVariable String nome) throws ResourceNotFoundException {
         log.debug("Buscando o usuário: " + nome);
-        ResponseEntity reponse = null;
-        List<UsuarioResponse> responses = usuarioServiceImpl.buscarPorNome(nome);
-        return ResponseEntity.ok(responses);
+        List<UsuarioResponse> response;
+        if (!usuarioServiceImpl.buscarPorNome(nome).isEmpty()) {
+            response = usuarioServiceImpl.buscarPorNome(nome);
+        } else {
+            throw new ResourceNotFoundException("Usuario não encontrado!");
+        }
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletarUsuario(@PathVariable Integer id) {
+    public ResponseEntity<String> deletarUsuario(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Excluindo o usuário com id: " + id);
         ResponseEntity<String> response;
         if(usuarioServiceImpl.buscarPorId(id).isPresent()) {
-            usuarioServiceImpl.excluir(id);
+                usuarioServiceImpl.excluir(id);
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario excluído com sucesso!");
         }else{
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado!");
+            throw new ResourceNotFoundException("Usuario não encontrado!");
         }
         return response;
     }
 
     @PutMapping
-    public ResponseEntity<UsuarioResponse> atualizar(@RequestBody UsuarioRequestUpdate request) {
+    public ResponseEntity<UsuarioResponse> atualizar(@RequestBody UsuarioRequestUpdate request) throws ResourceNotFoundException {
         log.debug("Atualizando o usuário: " + request.toString());
         ResponseEntity response = null;
         if (request.getNome() != null && usuarioServiceImpl.buscarPorId(request.getId()).isPresent())
             response = ResponseEntity.ok(usuarioServiceImpl.atualizar(request));
         else
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+           throw new ResourceNotFoundException("Usuario não encontrado!");
         return response;
     }
 
