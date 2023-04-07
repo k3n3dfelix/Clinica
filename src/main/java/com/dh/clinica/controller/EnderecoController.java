@@ -2,6 +2,7 @@ package com.dh.clinica.controller;
 
 import com.dh.clinica.controller.dto.request.EnderecoRequest;
 import com.dh.clinica.controller.dto.response.EnderecoResponse;
+import com.dh.clinica.controller.dto.request.update.EnderecoRequestUpdate;
 import com.dh.clinica.service.impl.EnderecoServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +74,7 @@ public class EnderecoController {
     }
 
     @PutMapping
-    public ResponseEntity<EnderecoResponse> atualizar(@RequestBody EnderecoRequest request) {
+    public ResponseEntity<EnderecoResponse> atualizar(@RequestBody EnderecoRequestUpdate request) {
         log.debug("Atualizando o endereco: " + request.toString());
         ResponseEntity response = null;
         if (request.getId() != null && enderecoServiceImpl.buscarPorId(request.getId()).isPresent())

@@ -1,4 +1,4 @@
-package com.dh.clinica.controller.dto.response;
+package com.dh.clinica.controller.dto.request.update;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
@@ -9,10 +9,13 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UsuarioResponse {
+public class UsuarioRequestUpdate {
 
+    private Integer id;
     private String nome;
     private String email;
+    private String senha;
     private String nivelAcesso;
 
 }
+

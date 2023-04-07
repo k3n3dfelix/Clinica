@@ -2,6 +2,7 @@ package com.dh.clinica.service;
 
 import com.dh.clinica.controller.dto.request.UsuarioRequest;
 import com.dh.clinica.controller.dto.response.UsuarioResponse;
+import com.dh.clinica.controller.dto.request.update.UsuarioRequestUpdate;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,7 @@ public interface IUsuarioService {
 
     List<UsuarioResponse> buscarPorNome(String name);
 
-    UsuarioResponse atualizar (UsuarioRequest request);
+    UsuarioResponse atualizar (UsuarioRequestUpdate request);
 
     void excluir(Integer id);
 

@@ -1,7 +1,9 @@
-package com.dh.clinica.controller.dto.update;
+package com.dh.clinica.controller.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -9,11 +11,9 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DentistaRequestUpdate {
+public class ConsultaResponseCadastro {
 
     private Integer id;
-    private String nome;
-    private String sobrenome;
-    private String matricula;
+    private Date date;
 
 }

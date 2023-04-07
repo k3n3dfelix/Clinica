@@ -2,6 +2,7 @@ package com.dh.clinica.service.impl;
 
 import com.dh.clinica.controller.dto.request.UsuarioRequest;
 import com.dh.clinica.controller.dto.response.UsuarioResponse;
+import com.dh.clinica.controller.dto.request.update.UsuarioRequestUpdate;
 import com.dh.clinica.model.Usuario;
 import com.dh.clinica.repository.IUsuarioRepository;
 import com.dh.clinica.service.IUsuarioService;
@@ -65,7 +66,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public UsuarioResponse atualizar(UsuarioRequest request) {
+    public UsuarioResponse atualizar(UsuarioRequestUpdate request) {
         ObjectMapper mapper = new ObjectMapper();
         Usuario usuario = mapper.convertValue(request, Usuario.class);
         Usuario usuarioSalvo = usuarioRepository.saveAndFlush(usuario);
