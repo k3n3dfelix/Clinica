@@ -1,7 +1,7 @@
 package com.dh.clinica.controller;
 
 import com.dh.clinica.controller.dto.request.DentistaRequest;
-import com.dh.clinica.controller.dto.update.DentistaRequestUpdate;
+import com.dh.clinica.controller.dto.request.update.DentistaRequestUpdate;
 import com.dh.clinica.controller.dto.response.DentistaResponse;
 import com.dh.clinica.service.impl.DentistaServiceImpl;
 import org.apache.log4j.Logger;
@@ -26,7 +26,7 @@ public class DentistaController {
     public ResponseEntity<DentistaResponse> cadastrar(@RequestBody DentistaRequest request) {
         log.debug("Salvando o dentista: " + request.toString());
         ResponseEntity response = null;
-        if (!(request.getNome() == null || request.getMatricula()== null)){
+        if (!(request.getNome() == null || request.getSobrenome()== null || request.getMatricula()== null)){
             if (validacaoAtributo(request)){
                 DentistaResponse dentistaResponse = dentistaServiceImpl.salvar(request);
                 response = ResponseEntity.ok(dentistaResponse);

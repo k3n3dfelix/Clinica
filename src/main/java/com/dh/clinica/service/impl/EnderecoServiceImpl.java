@@ -2,6 +2,7 @@ package com.dh.clinica.service.impl;
 
 import com.dh.clinica.controller.dto.request.EnderecoRequest;
 import com.dh.clinica.controller.dto.response.EnderecoResponse;
+import com.dh.clinica.controller.dto.request.update.EnderecoRequestUpdate;
 import com.dh.clinica.model.Endereco;
 import com.dh.clinica.repository.IEnderecoRepository;
 import com.dh.clinica.service.IEnderecoService;
@@ -65,7 +66,7 @@ public class EnderecoServiceImpl implements IEnderecoService {
     }
 
     @Override
-    public EnderecoResponse atualizar(EnderecoRequest request) {
+    public EnderecoResponse atualizar(EnderecoRequestUpdate request) {
         ObjectMapper mapper = new ObjectMapper();
         Endereco endereco = mapper.convertValue(request, Endereco.class);
         Endereco enderecoSalvo = enderecoRepository.saveAndFlush(endereco);

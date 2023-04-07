@@ -2,6 +2,7 @@ package com.dh.clinica.service;
 
 import com.dh.clinica.controller.dto.request.PacienteRequest;
 import com.dh.clinica.controller.dto.response.PacienteResponse;
+import com.dh.clinica.controller.dto.request.update.PacienteRequestUpdate;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +17,7 @@ public interface IPacienteService {
 
     List<PacienteResponse> buscarPorNome(String name);
 
-    PacienteResponse atualizar (PacienteRequest request);
+    PacienteResponse atualizar (PacienteRequestUpdate request);
 
     void excluir(Integer id);
 

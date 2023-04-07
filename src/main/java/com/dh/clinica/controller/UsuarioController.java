@@ -2,6 +2,7 @@ package com.dh.clinica.controller;
 
 import com.dh.clinica.controller.dto.request.UsuarioRequest;
 import com.dh.clinica.controller.dto.response.UsuarioResponse;
+import com.dh.clinica.controller.dto.request.update.UsuarioRequestUpdate;
 import com.dh.clinica.service.impl.UsuarioServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +74,7 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<UsuarioResponse> atualizar(@RequestBody UsuarioRequest request) {
+    public ResponseEntity<UsuarioResponse> atualizar(@RequestBody UsuarioRequestUpdate request) {
         log.debug("Atualizando o usuário: " + request.toString());
         ResponseEntity response = null;
         if (request.getNome() != null && usuarioServiceImpl.buscarPorId(request.getId()).isPresent())

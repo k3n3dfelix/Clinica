@@ -2,6 +2,8 @@ package com.dh.clinica.service.impl;
 
 import com.dh.clinica.controller.dto.request.ConsultaRequest;
 import com.dh.clinica.controller.dto.response.ConsultaResponse;
+import com.dh.clinica.controller.dto.request.update.ConsultaRequestUpdate;
+import com.dh.clinica.controller.dto.response.ConsultaResponseCadastro;
 import com.dh.clinica.model.Consulta;
 import com.dh.clinica.repository.IConsultaRepository;
 import com.dh.clinica.service.IConsultaService;
@@ -24,12 +26,12 @@ public class ConsultaServiceImpl implements IConsultaService {
     }
 
     @Override
-    public ConsultaResponse salvar(ConsultaRequest request) {
+    public ConsultaResponseCadastro salvar(ConsultaRequest request) {
         ObjectMapper mapper = new ObjectMapper();
         Consulta consulta = mapper.convertValue(request, Consulta.class);
         Consulta consultaSalvo = consultaRepository.save(consulta);
-        ConsultaResponse consultaResponse = mapper.convertValue(consultaSalvo, ConsultaResponse.class);
-        return consultaResponse;
+        ConsultaResponseCadastro consultaResponseCadastro = mapper.convertValue(consultaSalvo, ConsultaResponseCadastro.class);
+        return consultaResponseCadastro;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class ConsultaServiceImpl implements IConsultaService {
 
 
     @Override
-    public ConsultaResponse atualizar(ConsultaRequest request) {
+    public ConsultaResponse atualizar(ConsultaRequestUpdate request) {
         ObjectMapper mapper = new ObjectMapper();
         Consulta consulta = mapper.convertValue(request, Consulta.class);
         Consulta consultaSalvo = consultaRepository.saveAndFlush(consulta);

@@ -2,6 +2,7 @@ package com.dh.clinica.controller;
 
 import com.dh.clinica.controller.dto.request.PacienteRequest;
 import com.dh.clinica.controller.dto.response.PacienteResponse;
+import com.dh.clinica.controller.dto.request.update.PacienteRequestUpdate;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class PacienteController {
     public ResponseEntity<PacienteResponse> cadastrar(@RequestBody PacienteRequest request) {
         log.debug("Salvando o paciente: " + request.toString());
         ResponseEntity response = null;
-        if (!(request.getNome() == null || request.getSobrenome()== null || request.getId()== null || request.getRg()== null || request.getDataCadastro()== null || request.getEndereco()== null)){
+        if (!(request.getNome() == null || request.getSobrenome()== null || request.getRg()== null || request.getDataCadastro()== null || request.getEndereco()== null)){
             if (validacaoAtributo(request)){
                 PacienteResponse pacienteResponse = pacienteServiceImpl.salvar(request);
                 response = ResponseEntity.ok(pacienteResponse);
@@ -73,7 +74,7 @@ public class PacienteController {
     }
 
     @PutMapping
-    public ResponseEntity<PacienteResponse> atualizar(@RequestBody PacienteRequest request) {
+    public ResponseEntity<PacienteResponse> atualizar(@RequestBody PacienteRequestUpdate request) {
         log.debug("Atualizando o paciente: " + request.toString());
         ResponseEntity response = null;
         if (request.getNome() != null && pacienteServiceImpl.buscarPorId(request.getId()).isPresent())

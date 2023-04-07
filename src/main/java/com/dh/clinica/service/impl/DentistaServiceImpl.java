@@ -1,7 +1,7 @@
 package com.dh.clinica.service.impl;
 
 import com.dh.clinica.controller.dto.request.DentistaRequest;
-import com.dh.clinica.controller.dto.update.DentistaRequestUpdate;
+import com.dh.clinica.controller.dto.request.update.DentistaRequestUpdate;
 import com.dh.clinica.controller.dto.response.DentistaResponse;
 import com.dh.clinica.model.Dentista;
 import com.dh.clinica.repository.IDentistaRepository;

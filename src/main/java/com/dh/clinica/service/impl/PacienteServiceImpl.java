@@ -2,6 +2,7 @@ package com.dh.clinica.service.impl;
 
 import com.dh.clinica.controller.dto.request.PacienteRequest;
 import com.dh.clinica.controller.dto.response.PacienteResponse;
+import com.dh.clinica.controller.dto.request.update.PacienteRequestUpdate;
 import com.dh.clinica.model.Paciente;
 import com.dh.clinica.repository.IPacienteRepository;
 import com.dh.clinica.service.IPacienteService;
@@ -65,7 +66,7 @@ public class PacienteServiceImpl implements IPacienteService {
     }
 
     @Override
-    public PacienteResponse atualizar(PacienteRequest request) {
+    public PacienteResponse atualizar(PacienteRequestUpdate request) {
         ObjectMapper mapper = new ObjectMapper();
         Paciente paciente = mapper.convertValue(request, Paciente.class);
         Paciente pacienteSalvo = pacienteRepository.saveAndFlush(paciente);

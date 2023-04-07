@@ -11,7 +11,6 @@ import lombok.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DentistaResponse {
 
-    private Integer id;
     private String nome;
     private String sobrenome;
     private String matricula;

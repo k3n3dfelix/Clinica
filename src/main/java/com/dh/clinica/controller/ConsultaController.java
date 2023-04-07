@@ -2,6 +2,8 @@ package com.dh.clinica.controller;
 
 import com.dh.clinica.controller.dto.request.ConsultaRequest;
 import com.dh.clinica.controller.dto.response.ConsultaResponse;
+import com.dh.clinica.controller.dto.request.update.ConsultaRequestUpdate;
+import com.dh.clinica.controller.dto.response.ConsultaResponseCadastro;
 import com.dh.clinica.service.impl.ConsultaServiceImpl;
 import com.dh.clinica.service.impl.DentistaServiceImpl;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
@@ -27,13 +29,13 @@ public class ConsultaController {
     private ConsultaServiceImpl consultaServiceImpl;
 
     @PostMapping
-    public ResponseEntity<ConsultaResponse> cadastrar(@RequestBody ConsultaRequest consulta) {
+    public ResponseEntity<ConsultaResponseCadastro> cadastrar(@RequestBody ConsultaRequest consulta) {
         log.debug("Salvando a consulta: " + consulta.toString());
-        ResponseEntity<ConsultaResponse> response = null;
+        ResponseEntity<ConsultaResponseCadastro> response = null;
         if (!(consulta.getPaciente()== null || consulta.getDentista()== null || consulta.getDate()== null)){
             if(pacienteServiceImpl.buscarPorId(consulta.getPaciente().getId()).isPresent() && dentistaServiceImpl.buscarPorId(consulta.getDentista().getId()).isPresent()){
-                ConsultaResponse consultaResponse = consultaServiceImpl.salvar(consulta);
-                response = ResponseEntity.ok(consultaResponse);
+                ConsultaResponseCadastro consultaResponseCadastro = consultaServiceImpl.salvar(consulta);
+                response = ResponseEntity.ok(consultaResponseCadastro);
             } else {
                 response = new ResponseEntity(HttpStatus.NOT_FOUND);
             }
@@ -71,7 +73,7 @@ public class ConsultaController {
     }
 
     @PutMapping
-    public ResponseEntity<ConsultaResponse> atualizar(@RequestBody ConsultaRequest request) {
+    public ResponseEntity<ConsultaResponse> atualizar(@RequestBody ConsultaRequestUpdate request) {
         log.debug("Atualizando o consulta: " + request.toString());
         ResponseEntity response = null;
         if (request.getId() != null && consultaServiceImpl.buscarPorId(request.getId()).isPresent())
