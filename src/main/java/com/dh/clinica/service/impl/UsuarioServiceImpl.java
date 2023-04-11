@@ -8,6 +8,7 @@ import com.dh.clinica.repository.IUsuarioRepository;
 import com.dh.clinica.service.IUsuarioService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public UsuarioResponse salvar(UsuarioRequest request) {
         ObjectMapper mapper = new ObjectMapper();
         Usuario usuario = mapper.convertValue(request, Usuario.class);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String senhaCriptografada = encoder.encode(usuario.getSenha());
+        usuario.setSenha(senhaCriptografada);
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
         UsuarioResponse usuarioResponse = mapper.convertValue(usuarioSalvo, UsuarioResponse.class);
         return usuarioResponse;

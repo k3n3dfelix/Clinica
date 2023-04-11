@@ -5,11 +5,18 @@ import com.dh.clinica.controller.dto.response.UsuarioResponse;
 import com.dh.clinica.controller.dto.request.update.UsuarioRequestUpdate;
 import com.dh.clinica.exceptions.InvalidDataException;
 import com.dh.clinica.exceptions.ResourceNotFoundException;
+import com.dh.clinica.model.Usuario;
+import com.dh.clinica.model.dto.UsuarioDTO;
+import com.dh.clinica.security.TokenDTO;
+import com.dh.clinica.security.TokenService;
 import com.dh.clinica.service.impl.UsuarioServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +31,24 @@ public class UsuarioController {
     @Autowired
     private UsuarioServiceImpl usuarioServiceImpl;
 
-    @PostMapping()
+    @Autowired
+    private AuthenticationManager manager;
+
+    @Autowired
+    private UsuarioServiceImpl usuarioService;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @PostMapping("/login")
+    public ResponseEntity logar(@RequestBody UsuarioDTO usuarioDTO) {
+        UsernamePasswordAuthenticationToken token =
+                new UsernamePasswordAuthenticationToken(usuarioDTO.getLogin(), usuarioDTO.getSenha());
+        Authentication authenticate = manager.authenticate(token);
+        String tokenJWT = tokenService.gerarToken((Usuario) authenticate.getPrincipal());
+        return ResponseEntity.ok(new TokenDTO(tokenJWT));
+    }
+    @PostMapping("/cadastrar")
     public ResponseEntity<UsuarioResponse> cadastrar(@RequestBody UsuarioRequest request) throws InvalidDataException {
         log.debug("Salvando o usuário: " + request.toString());
         ResponseEntity response = null;
@@ -40,7 +64,7 @@ public class UsuarioController {
         return response;
     }
 
-    @GetMapping
+    @GetMapping("/buscar_todos")
     public ResponseEntity<List<UsuarioResponse>> listarTodos() {
         log.debug("Buscando todos os usuários cadastrados...");
         ResponseEntity reponse = null;
