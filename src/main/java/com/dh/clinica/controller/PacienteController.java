@@ -25,17 +25,18 @@ public class PacienteController {
     private PacienteServiceImpl pacienteServiceImpl;
 
     @PostMapping()
-    public ResponseEntity<PacienteResponse> cadastrar(@RequestBody PacienteRequest request) {
+    public ResponseEntity<PacienteResponse> cadastrar(@RequestBody PacienteRequest request) throws InvalidDataException {
         log.debug("Salvando o paciente: " + request.toString());
         ResponseEntity response = null;
         if (!(request.getNome() == null || request.getSobrenome()== null || request.getRg()== null || request.getDataCadastro()== null || request.getEndereco()== null)){
             if (validacaoAtributo(request)){
                 PacienteResponse pacienteResponse = pacienteServiceImpl.salvar(request);
                 response = ResponseEntity.ok(pacienteResponse);
+                log.debug("Paciente salvo!");
             } else {
-                response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+                throw new InvalidDataException("Um ou mais campos estão em branco ou vazio! Cadastro não realizado!");
             }} else {
-            response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new InvalidDataException("Informações inválidas! Cadastro não realizado!");
         }
         return response;
     }
@@ -49,16 +50,28 @@ public class PacienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<PacienteResponse>> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<Optional<PacienteResponse>> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Buscando o paciente com id: " + id);
-        return ResponseEntity.ok(pacienteServiceImpl.buscarPorId(id));
+        if(pacienteServiceImpl.buscarPorId(id).isPresent()) {
+            log.debug("Paciente encontrado!");
+            return ResponseEntity.ok(pacienteServiceImpl.buscarPorId(id));
+        } else{
+            throw new ResourceNotFoundException("Paciente não encontrado!");
+        }
+
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<PacienteResponse>> buscarPorNome(@PathVariable String nome){
+    public ResponseEntity<List<PacienteResponse>> buscarPorNome(@PathVariable String nome) throws ResourceNotFoundException {
         log.debug("Buscando o paciente: " + nome);
-        ResponseEntity reponse = null;
+
         List<PacienteResponse> responses = pacienteServiceImpl.buscarPorNome(nome);
+        if (!pacienteServiceImpl.buscarPorNome(nome).isEmpty()) {
+            log.debug("Usuário(s) encontrado(s)!");
+            responses = pacienteServiceImpl.buscarPorNome(nome);
+        } else {
+            throw new ResourceNotFoundException("Paciente não encontrado!");
+        }
         return ResponseEntity.ok(responses);
     }
 
@@ -80,13 +93,23 @@ public class PacienteController {
     }
 
     @PutMapping
-    public ResponseEntity<PacienteResponse> atualizar(@RequestBody PacienteRequestUpdate request) {
+    public ResponseEntity<PacienteResponse> atualizar(@RequestBody PacienteRequestUpdate request) throws ResourceNotFoundException, InvalidDataException {
         log.debug("Atualizando o paciente: " + request.toString());
         ResponseEntity response = null;
-        if (request.getNome() != null && pacienteServiceImpl.buscarPorId(request.getId()).isPresent())
-            response = ResponseEntity.ok(pacienteServiceImpl.atualizar(request));
-        else
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        if (request.getNome() != null && pacienteServiceImpl.buscarPorId(request.getId()).isPresent()){
+
+
+            if ( pacienteServiceImpl.buscarPorId(request.getId()).isPresent()){
+                response = ResponseEntity.ok(pacienteServiceImpl.atualizar(request));
+                log.debug("Cadastro do paciente atualizado!");
+            } else{
+                throw new ResourceNotFoundException("paciente não encontrado!");
+            }
+        } else {
+            throw new InvalidDataException("Informações inválidas! Atualização do cadastro não realizada!");
+        }
+
+
         return response;
     }
 
