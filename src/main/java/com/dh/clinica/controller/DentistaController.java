@@ -3,6 +3,8 @@ package com.dh.clinica.controller;
 import com.dh.clinica.controller.dto.request.DentistaRequest;
 import com.dh.clinica.controller.dto.request.update.DentistaRequestUpdate;
 import com.dh.clinica.controller.dto.response.DentistaResponse;
+import com.dh.clinica.exceptions.InvalidDataException;
+import com.dh.clinica.exceptions.ResourceNotFoundException;
 import com.dh.clinica.service.impl.DentistaServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ public class DentistaController {
     private DentistaServiceImpl dentistaServiceImpl;
 
     @PostMapping()
-    public ResponseEntity<DentistaResponse> cadastrar(@RequestBody DentistaRequest request) {
+    public ResponseEntity<DentistaResponse> cadastrar(@RequestBody DentistaRequest request) throws InvalidDataException{
         log.debug("Salvando o dentista: " + request.toString());
         ResponseEntity response = null;
         if (!(request.getNome() == null || request.getSobrenome()== null || request.getMatricula()== null)){
@@ -31,9 +33,9 @@ public class DentistaController {
                 DentistaResponse dentistaResponse = dentistaServiceImpl.salvar(request);
                 response = ResponseEntity.ok(dentistaResponse);
             } else {
-                response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+                throw new InvalidDataException("Um ou mais campos estão em branco ou vazio! Cadastro não realizado!");
             }} else {
-            response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new InvalidDataException("Informações inválidas! Cadastro não realizado!");
         }
         return response;
     }
@@ -47,9 +49,14 @@ public class DentistaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<DentistaResponse>> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<Optional<DentistaResponse>> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException{
         log.debug("Buscando o dentista com id: " + id);
-        return ResponseEntity.ok(dentistaServiceImpl.buscarPorId(id));
+        if(dentistaServiceImpl.buscarPorId(id).isPresent()) {
+            log.debug("Dentista encontrado!");
+            return ResponseEntity.ok(dentistaServiceImpl.buscarPorId(id));
+        } else{
+            throw new ResourceNotFoundException("Dentista não encontrado!");
+        }
     }
 
     @GetMapping("/nome/{nome}")
@@ -61,26 +68,30 @@ public class DentistaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletarDentista(@PathVariable Integer id) {
+    public ResponseEntity<String> deletarDentista(@PathVariable Integer id)  throws ResourceNotFoundException {
         log.debug("Excluindo o dentista com id: " + id);
         ResponseEntity<String> response;
         if(dentistaServiceImpl.buscarPorId(id).isPresent()) {
             dentistaServiceImpl.excluir(id);
+            log.debug("Dentista excluído!");
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Dentista excluído com sucesso!");
         }else{
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dentista não encontrado!");
+            throw new ResourceNotFoundException("Dentista não encontrado!");
         }
         return response;
     }
 
     @PutMapping
-    public ResponseEntity<DentistaResponse> atualizar(@RequestBody DentistaRequestUpdate request) {
+    public ResponseEntity<DentistaResponse> atualizar(@RequestBody DentistaRequestUpdate request) throws ResourceNotFoundException{
         log.debug("Atualizando o dentista: " + request.toString());
         ResponseEntity response = null;
-        if (request.getNome() != null && dentistaServiceImpl.buscarPorId(request.getId()).isPresent())
+        if (request.getNome() != null && dentistaServiceImpl.buscarPorId(request.getId()).isPresent()){
+            log.debug("Cadastro do dentista atualizado!");
             response = ResponseEntity.ok(dentistaServiceImpl.atualizar(request));
-        else
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        else{
+            throw new ResourceNotFoundException("Dentista não encontrado, não foi possivel atualizar!");
+        }
         return response;
     }
 
