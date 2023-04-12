@@ -3,6 +3,8 @@ package com.dh.clinica.controller;
 import com.dh.clinica.controller.dto.request.EnderecoRequest;
 import com.dh.clinica.controller.dto.response.EnderecoResponse;
 import com.dh.clinica.controller.dto.request.update.EnderecoRequestUpdate;
+import com.dh.clinica.exceptions.InvalidDataException;
+import com.dh.clinica.exceptions.ResourceNotFoundException;
 import com.dh.clinica.service.impl.EnderecoServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,7 @@ public class EnderecoController {
     private EnderecoServiceImpl enderecoServiceImpl;
 
     @PostMapping()
-    public ResponseEntity<EnderecoResponse> cadastrar(@RequestBody EnderecoRequest request) {
+    public ResponseEntity<EnderecoResponse> cadastrar(@RequestBody EnderecoRequest request) throws InvalidDataException{
         log.debug("Salvando o endereco: " + request.toString());
         ResponseEntity response = null;
         if (!(request.getCidade() == null || request.getEstado() == null || request.getNumero()== null || request.getRua() == null)){
@@ -31,9 +33,9 @@ public class EnderecoController {
                 EnderecoResponse enderecoResponse = enderecoServiceImpl.salvar(request);
                 response = ResponseEntity.ok(enderecoResponse);
             } else {
-                response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+                throw new InvalidDataException("Um ou mais campos estão em branco ou vazio! Cadastro não realizado!");
             }} else {
-            response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new InvalidDataException("Informações inválidas! Cadastro não realizado!");
         }
         return response;
     }
@@ -61,26 +63,26 @@ public class EnderecoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletarEndereco(@PathVariable Integer id) {
+    public ResponseEntity<String> deletarEndereco(@PathVariable Integer id) throws ResourceNotFoundException{
         log.debug("Excluindo o endereco com id: " + id);
         ResponseEntity<String> response;
         if(enderecoServiceImpl.buscarPorId(id).isPresent()) {
             enderecoServiceImpl.excluir(id);
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Endereco excluído com sucesso!");
         }else{
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Endereco não encontrado!");
+            throw new ResourceNotFoundException("Endereço não encontrado!");
         }
         return response;
     }
 
     @PutMapping
-    public ResponseEntity<EnderecoResponse> atualizar(@RequestBody EnderecoRequestUpdate request) {
+    public ResponseEntity<EnderecoResponse> atualizar(@RequestBody EnderecoRequestUpdate request) throws ResourceNotFoundException{
         log.debug("Atualizando o endereco: " + request.toString());
         ResponseEntity response = null;
         if (request.getId() != null && enderecoServiceImpl.buscarPorId(request.getId()).isPresent())
             response = ResponseEntity.ok(enderecoServiceImpl.atualizar(request));
         else
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            throw new ResourceNotFoundException("Endereço não encontrado para ser atualizado!");
         return response;
     }
 
