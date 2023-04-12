@@ -11,6 +11,6 @@ import java.util.List;
 public interface IUsuarioRepository extends JpaRepository<Usuario, Integer> {
 
     List<Usuario> findUsuarioByNomeContainingIgnoreCase(String nome);
-
+    Usuario findUsuarioByLoginEquals(String login);
     UserDetails findByLogin(String username);
 }

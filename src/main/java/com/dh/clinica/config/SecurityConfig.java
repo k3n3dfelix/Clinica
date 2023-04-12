@@ -31,7 +31,6 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/usuarios/cadastrar").permitAll()
-                .requestMatchers(HttpMethod.GET, "/usuarios/buscar_todos").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

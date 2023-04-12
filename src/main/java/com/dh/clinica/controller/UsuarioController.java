@@ -42,6 +42,7 @@ public class UsuarioController {
 
     @PostMapping("/login")
     public ResponseEntity logar(@RequestBody UsuarioDTO usuarioDTO) {
+        log.debug("Realizando login do usuário " + usuarioDTO.toString());
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(usuarioDTO.getLogin(), usuarioDTO.getSenha());
         Authentication authenticate = manager.authenticate(token);
@@ -52,10 +53,11 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponse> cadastrar(@RequestBody UsuarioRequest request) throws InvalidDataException {
         log.debug("Salvando o usuário: " + request.toString());
         ResponseEntity response = null;
-        if (!(request.getNome() == null || request.getEmail()== null || request.getSenha()== null || request.getNivelAcesso() == null)){
+        if (!(request.getNome() == null || request.getEmail()== null || request.getLogin()== null|| request.getSenha()== null || request.getNivelAcesso() == null)){
             if (validacaoAtributo(request)){
                 UsuarioResponse usuarioResponse = usuarioServiceImpl.salvar(request);
                 response = ResponseEntity.ok(usuarioResponse);
+                log.debug("Usuário salvo!");
             } else {
                 throw new InvalidDataException("O Atributo 'nome' está em branco ou vazio! Cadastro não realizado!");
             }} else {
@@ -64,7 +66,7 @@ public class UsuarioController {
         return response;
     }
 
-    @GetMapping("/buscar_todos")
+    @GetMapping()
     public ResponseEntity<List<UsuarioResponse>> listarTodos() {
         log.debug("Buscando todos os usuários cadastrados...");
         ResponseEntity reponse = null;
@@ -76,6 +78,7 @@ public class UsuarioController {
     public ResponseEntity<Optional<UsuarioResponse>> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Buscando o usuário com id: " + id);
         if(usuarioServiceImpl.buscarPorId(id).isPresent()) {
+            log.debug("Usuário encontrado!");
         return ResponseEntity.ok(usuarioServiceImpl.buscarPorId(id));
         } else{
             throw new ResourceNotFoundException("Usuario não encontrado!");
@@ -84,10 +87,23 @@ public class UsuarioController {
 
     @GetMapping("/nome/{nome}")
     public ResponseEntity<List<UsuarioResponse>> buscarPorNome(@PathVariable String nome) throws ResourceNotFoundException {
-        log.debug("Buscando o usuário: " + nome);
+        log.debug("Buscando o(s) usuário(s): " + nome);
         List<UsuarioResponse> response;
         if (!usuarioServiceImpl.buscarPorNome(nome).isEmpty()) {
+            log.debug("Usuário(s) encontrado(s)!");
             response = usuarioServiceImpl.buscarPorNome(nome);
+        } else {
+            throw new ResourceNotFoundException("Usuario não encontrado!");
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/login/{nome}")
+    public ResponseEntity<UsuarioResponse> buscarPorLogin(@PathVariable String nome) throws ResourceNotFoundException {
+        log.debug("Buscando o usuário: " + nome);
+        UsuarioResponse response;
+        if (usuarioServiceImpl.buscarPorLogin(nome) != null) {
+            response = usuarioServiceImpl.buscarPorLogin(nome);
         } else {
             throw new ResourceNotFoundException("Usuario não encontrado!");
         }
@@ -108,13 +124,19 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<UsuarioResponse> atualizar(@RequestBody UsuarioRequestUpdate request) throws ResourceNotFoundException {
+    public ResponseEntity<UsuarioResponse> atualizar(@RequestBody UsuarioRequestUpdate request) throws ResourceNotFoundException, InvalidDataException {
         log.debug("Atualizando o usuário: " + request.toString());
         ResponseEntity response = null;
-        if (request.getNome() != null && usuarioServiceImpl.buscarPorId(request.getId()).isPresent())
-            response = ResponseEntity.ok(usuarioServiceImpl.atualizar(request));
-        else
-           throw new ResourceNotFoundException("Usuario não encontrado!");
+        if (!(request.getNome() == null || request.getEmail()== null || request.getLogin()== null|| request.getSenha()== null || request.getNivelAcesso() == null)){
+            if ( usuarioServiceImpl.buscarPorId(request.getId()).isPresent()){
+                response = ResponseEntity.ok(usuarioServiceImpl.atualizar(request));
+            } else{
+                throw new ResourceNotFoundException("Usuario não encontrado!");
+            }
+        } else {
+            throw new InvalidDataException("Informações inválidas! Cadastro não realizado!");
+            }
+
         return response;
     }
 

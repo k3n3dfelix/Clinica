@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -67,6 +70,14 @@ public class UsuarioServiceImpl implements IUsuarioService {
             responses.add(mapper.convertValue(usuario, UsuarioResponse.class));
         }
         return responses;
+    }
+
+    @Override
+    public UsuarioResponse buscarPorLogin(String name) {
+        Usuario usuario = usuarioRepository.findUsuarioByLoginEquals(name);
+        ObjectMapper mapper = new ObjectMapper();
+         UsuarioResponse usuarioResponse = mapper.convertValue(usuario, UsuarioResponse.class);
+        return usuarioResponse ;
     }
 
     @Override

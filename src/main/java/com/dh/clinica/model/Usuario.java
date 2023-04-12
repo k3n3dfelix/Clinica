@@ -1,9 +1,6 @@
 package com.dh.clinica.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,6 +26,7 @@ public class Usuario implements UserDetails {
 
     private String email;
 
+    @Column(unique = true)
     private String login;
     private String senha;
 

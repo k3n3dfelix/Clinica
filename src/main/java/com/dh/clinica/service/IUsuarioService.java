@@ -17,6 +17,8 @@ public interface IUsuarioService {
 
     List<UsuarioResponse> buscarPorNome(String name);
 
+    UsuarioResponse buscarPorLogin(String name);
+
     UsuarioResponse atualizar (UsuarioRequestUpdate request);
 
     void excluir(Integer id);
