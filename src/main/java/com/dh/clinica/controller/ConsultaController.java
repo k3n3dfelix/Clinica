@@ -4,6 +4,8 @@ import com.dh.clinica.controller.dto.request.ConsultaRequest;
 import com.dh.clinica.controller.dto.response.ConsultaResponse;
 import com.dh.clinica.controller.dto.request.update.ConsultaRequestUpdate;
 import com.dh.clinica.controller.dto.response.ConsultaResponseCadastro;
+import com.dh.clinica.exceptions.InvalidDataException;
+import com.dh.clinica.exceptions.ResourceNotFoundException;
 import com.dh.clinica.service.impl.ConsultaServiceImpl;
 import com.dh.clinica.service.impl.DentistaServiceImpl;
 import com.dh.clinica.service.impl.PacienteServiceImpl;
@@ -29,57 +31,69 @@ public class ConsultaController {
     private ConsultaServiceImpl consultaServiceImpl;
 
     @PostMapping
-    public ResponseEntity<ConsultaResponseCadastro> cadastrar(@RequestBody ConsultaRequest consulta) {
+    public ResponseEntity<ConsultaResponseCadastro> cadastrar(@RequestBody ConsultaRequest consulta) throws InvalidDataException {
         log.debug("Salvando a consulta: " + consulta.toString());
         ResponseEntity<ConsultaResponseCadastro> response = null;
         if (!(consulta.getPaciente()== null || consulta.getDentista()== null || consulta.getDate()== null)){
             if(pacienteServiceImpl.buscarPorId(consulta.getPaciente().getId()).isPresent() && dentistaServiceImpl.buscarPorId(consulta.getDentista().getId()).isPresent()){
                 ConsultaResponseCadastro consultaResponseCadastro = consultaServiceImpl.salvar(consulta);
                 response = ResponseEntity.ok(consultaResponseCadastro);
+                log.debug("Consulta salva!");
             } else {
-                response = new ResponseEntity(HttpStatus.NOT_FOUND);
-            }
-        } else {
-            response = new ResponseEntity(HttpStatus.BAD_REQUEST);
+                throw new InvalidDataException("O id do usuário e/ou dentista informado não existe ou um ou mais campos estão em branco ou vazio! Cadastro não realizado!");
+            }} else {
+            throw new InvalidDataException("Informações inválidas! Cadastro não realizado!");
         }
         return response;
     }
 
     @GetMapping
     public ResponseEntity<List<ConsultaResponse>> listarTodos() {
-        log.debug("Buscando todos os consultas cadastrados...");
-        ResponseEntity reponse = null;
+        log.debug("Buscando todas os consultas cadastrados...");
         List<ConsultaResponse> responses = consultaServiceImpl.buscarTodos();
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<ConsultaResponse>> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<Optional<ConsultaResponse>> buscarPorId(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Buscando o consulta com id: " + id);
-        return ResponseEntity.ok(consultaServiceImpl.buscarPorId(id));
+        if (consultaServiceImpl.buscarPorId(id).isPresent()) {
+            log.debug("Consulta encontrada!");
+            return ResponseEntity.ok(consultaServiceImpl.buscarPorId(id));
+        }else{
+            throw new ResourceNotFoundException("Consulta não encontrada!");
+        }
+
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletarConsulta(@PathVariable Integer id) {
+    public ResponseEntity<String> deletarConsulta(@PathVariable Integer id) throws ResourceNotFoundException {
         log.debug("Excluindo o consulta com id: " + id);
         ResponseEntity<String> response;
         if(consultaServiceImpl.buscarPorId(id).isPresent()) {
             consultaServiceImpl.excluir(id);
-            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Consulta excluído com sucesso!");
+            log.debug("Consulta excluída!");
+            response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Consulta excluída com sucesso!");
         }else{
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Consulta não encontrado!");
+            throw new ResourceNotFoundException("Consulta não encontrada!");
         }
         return response;
     }
 
     @PutMapping
-    public ResponseEntity<ConsultaResponse> atualizar(@RequestBody ConsultaRequestUpdate request) {
-        log.debug("Atualizando o consulta: " + request.toString());
+    public ResponseEntity<ConsultaResponse> atualizar(@RequestBody ConsultaRequestUpdate consulta) throws ResourceNotFoundException, InvalidDataException {
+        log.debug("Atualizando o consulta: " + consulta.toString());
         ResponseEntity response = null;
-        if (request.getId() != null && consultaServiceImpl.buscarPorId(request.getId()).isPresent())
-            response = ResponseEntity.ok(consultaServiceImpl.atualizar(request));
-        else
-            response = ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        if (consulta.getId() != null && consultaServiceImpl.buscarPorId(consulta.getId()).isPresent()){
+            if (!(consulta.getPaciente()== null || consulta.getDentista()== null || consulta.getDate()== null)){
+                response = ResponseEntity.ok(consultaServiceImpl.atualizar(consulta));
+                log.debug("As informações da consulta foram atualizadas!");
+            } else{
+                throw new InvalidDataException("Informações inválidas! A atualização da consulta não foi realizada!");
+            }
+        }else{
+            throw new ResourceNotFoundException("Consulta não encontrada!");
+        }
         return response;
     }
 

@@ -69,7 +69,6 @@ public class UsuarioController {
     @GetMapping()
     public ResponseEntity<List<UsuarioResponse>> listarTodos() {
         log.debug("Buscando todos os usuários cadastrados...");
-        ResponseEntity reponse = null;
         List<UsuarioResponse> responses = usuarioServiceImpl.buscarTodos();
         return ResponseEntity.ok(responses);
     }

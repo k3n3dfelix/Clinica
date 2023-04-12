@@ -16,7 +16,7 @@ public class TokenService {
 
     public String gerarToken(Usuario usuario) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256("2313246546");
+            Algorithm algorithm = Algorithm.HMAC256("]V)>j%n[Q^?mkzbLN&^/NkQ$#5myF`*;br'F&\\5qe)*'x^v3YVRd/9?~}MK&vQk7W`Y`+85n57cL;=rA,9X4+'xQuj/]buQ5{n$3'xLHhnUB>\"[^.zE.>\\>VNxM/vkyf");
             return JWT.create()
                     .withIssuer("API Dentista")
                     .withSubject(usuario.getLogin())
@@ -33,7 +33,7 @@ public class TokenService {
 
     public String getSubject(String tokenJWT) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256("2313246546");
+            Algorithm algorithm = Algorithm.HMAC256("]V)>j%n[Q^?mkzbLN&^/NkQ$#5myF`*;br'F&\\5qe)*'x^v3YVRd/9?~}MK&vQk7W`Y`+85n57cL;=rA,9X4+'xQuj/]buQ5{n$3'xLHhnUB>\"[^.zE.>\\>VNxM/vkyf");
             return JWT.require(algorithm)
                     .withIssuer("API Dentista")
                     .build()
