@@ -59,7 +59,7 @@ public class UsuarioController {
                 response = ResponseEntity.ok(usuarioResponse);
                 log.debug("Usuário salvo!");
             } else {
-                throw new InvalidDataException("O Atributo 'nome' está em branco ou vazio! Cadastro não realizado!");
+                throw new InvalidDataException("Um ou mais campos estão em branco ou vazio! Cadastro não realizado!");
             }} else {
             throw new InvalidDataException("Informações inválidas! Cadastro não realizado!");
         }
@@ -103,6 +103,7 @@ public class UsuarioController {
         log.debug("Buscando o usuário: " + nome);
         UsuarioResponse response;
         if (usuarioServiceImpl.buscarPorLogin(nome) != null) {
+            log.debug("Usuário encontrado!");
             response = usuarioServiceImpl.buscarPorLogin(nome);
         } else {
             throw new ResourceNotFoundException("Usuario não encontrado!");
@@ -116,6 +117,7 @@ public class UsuarioController {
         ResponseEntity<String> response;
         if(usuarioServiceImpl.buscarPorId(id).isPresent()) {
                 usuarioServiceImpl.excluir(id);
+            log.debug("Usuário excluído!");
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario excluído com sucesso!");
         }else{
             throw new ResourceNotFoundException("Usuario não encontrado!");
@@ -130,18 +132,24 @@ public class UsuarioController {
         if (!(request.getNome() == null || request.getEmail()== null || request.getLogin()== null|| request.getSenha()== null || request.getNivelAcesso() == null)){
             if ( usuarioServiceImpl.buscarPorId(request.getId()).isPresent()){
                 response = ResponseEntity.ok(usuarioServiceImpl.atualizar(request));
+                log.debug("Cadastro do usuário atualizado!");
             } else{
                 throw new ResourceNotFoundException("Usuario não encontrado!");
             }
         } else {
-            throw new InvalidDataException("Informações inválidas! Cadastro não realizado!");
+            throw new InvalidDataException("Informações inválidas! Atualização do cadastro não realizada!");
             }
-
         return response;
     }
 
     public boolean validacaoAtributo(UsuarioRequest request){
-        if (request.getNome().isEmpty() || request.getNome().isBlank()){
+        if (
+                request.getNome().isEmpty() || request.getNome().isBlank() ||
+                request.getLogin().isEmpty() || request.getLogin().isBlank() ||
+                request.getEmail().isEmpty() || request.getEmail().isBlank() ||
+                request.getSenha().isEmpty() || request.getSenha().isBlank() ||
+                request.getNivelAcesso().isEmpty() || request.getNivelAcesso().isBlank()
+        ){
             return false;
         }
         return true;

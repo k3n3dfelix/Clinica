@@ -70,7 +70,7 @@ public class PacienteController {
             try {
                 pacienteServiceImpl.excluir(id);
             } catch (Exception e){
-                throw new InvalidDataException("Erro! Paciente não foi excluído!");
+                throw new InvalidDataException("Erro! Paciente não foi excluído! Verifique se não há consultas cadastradas para esse paciente!");
             }
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Paciente excluído com sucesso!");
         }else{
