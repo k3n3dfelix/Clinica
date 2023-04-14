@@ -6,7 +6,7 @@ import com.dh.clinica.controller.dto.request.update.UsuarioRequestUpdate;
 import com.dh.clinica.exceptions.InvalidDataException;
 import com.dh.clinica.exceptions.ResourceNotFoundException;
 import com.dh.clinica.model.Usuario;
-import com.dh.clinica.model.dto.UsuarioDTO;
+import com.dh.clinica.controller.dto.UsuarioDTO;
 import com.dh.clinica.security.TokenDTO;
 import com.dh.clinica.security.TokenService;
 import com.dh.clinica.service.impl.UsuarioServiceImpl;

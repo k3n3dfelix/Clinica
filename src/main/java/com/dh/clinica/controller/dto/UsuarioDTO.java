@@ -1,4 +1,4 @@
-package com.dh.clinica.model.dto;
+package com.dh.clinica.controller.dto;
 
 import lombok.Builder;
 import lombok.Getter;
