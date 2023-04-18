@@ -58,13 +58,11 @@ public class PacienteController {
         } else{
             throw new ResourceNotFoundException("Paciente não encontrado!");
         }
-
     }
 
     @GetMapping("/nome/{nome}")
     public ResponseEntity<List<PacienteResponse>> buscarPorNome(@PathVariable String nome) throws ResourceNotFoundException {
         log.debug("Buscando o paciente: " + nome);
-
         List<PacienteResponse> responses = pacienteServiceImpl.buscarPorNome(nome);
         if (!pacienteServiceImpl.buscarPorNome(nome).isEmpty()) {
             log.debug("Usuário(s) encontrado(s)!");
@@ -85,6 +83,7 @@ public class PacienteController {
             } catch (Exception e){
                 throw new InvalidDataException("Erro! Paciente não foi excluído! Verifique se não há consultas cadastradas para esse paciente!");
             }
+            log.debug("Paciente excluído!");
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Paciente excluído com sucesso!");
         }else{
             throw new ResourceNotFoundException("Paciente não encontrado!");
@@ -96,20 +95,16 @@ public class PacienteController {
     public ResponseEntity<PacienteResponse> atualizar(@RequestBody PacienteRequestUpdate request) throws ResourceNotFoundException, InvalidDataException {
         log.debug("Atualizando o paciente: " + request.toString());
         ResponseEntity response = null;
-        if (request.getNome() != null && pacienteServiceImpl.buscarPorId(request.getId()).isPresent()){
-
-
+        if (request.getNome() != null){
             if ( pacienteServiceImpl.buscarPorId(request.getId()).isPresent()){
                 response = ResponseEntity.ok(pacienteServiceImpl.atualizar(request));
                 log.debug("Cadastro do paciente atualizado!");
             } else{
-                throw new ResourceNotFoundException("paciente não encontrado!");
+                throw new ResourceNotFoundException("Paciente não encontrado!");
             }
         } else {
             throw new InvalidDataException("Informações inválidas! Atualização do cadastro não realizada!");
         }
-
-
         return response;
     }
 

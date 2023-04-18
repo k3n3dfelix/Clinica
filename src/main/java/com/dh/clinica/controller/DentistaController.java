@@ -32,6 +32,7 @@ public class DentistaController {
             if (validacaoAtributo(request)){
                 DentistaResponse dentistaResponse = dentistaServiceImpl.salvar(request);
                 response = ResponseEntity.ok(dentistaResponse);
+                log.debug("Dentista salvo!");
             } else {
                 throw new InvalidDataException("Um ou mais campos estão em branco ou vazio! Cadastro não realizado!");
             }} else {
@@ -60,19 +61,28 @@ public class DentistaController {
     }
 
     @GetMapping("/nome/{nome}")
-    public ResponseEntity<List<DentistaResponse>> buscarPorNome(@PathVariable String nome){
+    public ResponseEntity<List<DentistaResponse>> buscarPorNome(@PathVariable String nome) throws ResourceNotFoundException {
         log.debug("Buscando o dentista: " + nome);
-        ResponseEntity reponse = null;
         List<DentistaResponse> responses = dentistaServiceImpl.buscarPorNome(nome);
+        if (!dentistaServiceImpl.buscarPorNome(nome).isEmpty()) {
+            log.debug("Dentista(s) encontrado(s)!");
+            responses = dentistaServiceImpl.buscarPorNome(nome);
+        } else {
+            throw new ResourceNotFoundException("Dentista não encontrado!");
+        }
         return ResponseEntity.ok(responses);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletarDentista(@PathVariable Integer id)  throws ResourceNotFoundException {
+    public ResponseEntity<String> deletarDentista(@PathVariable Integer id) throws ResourceNotFoundException, InvalidDataException {
         log.debug("Excluindo o dentista com id: " + id);
         ResponseEntity<String> response;
         if(dentistaServiceImpl.buscarPorId(id).isPresent()) {
-            dentistaServiceImpl.excluir(id);
+            try {
+                dentistaServiceImpl.excluir(id);
+            } catch (Exception e){
+                throw new InvalidDataException("Erro! Dentista não foi excluído! Verifique se não há consultas cadastradas para esse dentista!");
+            }
             log.debug("Dentista excluído!");
             response = ResponseEntity.status(HttpStatus.ACCEPTED).body("Dentista excluído com sucesso!");
         }else{
@@ -82,15 +92,18 @@ public class DentistaController {
     }
 
     @PutMapping
-    public ResponseEntity<DentistaResponse> atualizar(@RequestBody DentistaRequestUpdate request) throws ResourceNotFoundException{
+    public ResponseEntity<DentistaResponse> atualizar(@RequestBody DentistaRequestUpdate request) throws ResourceNotFoundException, InvalidDataException {
         log.debug("Atualizando o dentista: " + request.toString());
         ResponseEntity response = null;
-        if (request.getNome() != null && dentistaServiceImpl.buscarPorId(request.getId()).isPresent()){
-            log.debug("Cadastro do dentista atualizado!");
-            response = ResponseEntity.ok(dentistaServiceImpl.atualizar(request));
-        }
-        else{
-            throw new ResourceNotFoundException("Dentista não encontrado, não foi possivel atualizar!");
+        if (request.getNome() != null){
+            if ( dentistaServiceImpl.buscarPorId(request.getId()).isPresent()){
+                response = ResponseEntity.ok(dentistaServiceImpl.atualizar(request));
+                log.debug("Cadastro do dentista atualizado!");
+            } else{
+                throw new ResourceNotFoundException("Dentista não encontrado!");
+            }
+        } else {
+            throw new InvalidDataException("Informações inválidas! Atualização do cadastro não realizada!");
         }
         return response;
     }
@@ -101,6 +114,5 @@ public class DentistaController {
         }
         return true;
     }
-
 
 }
